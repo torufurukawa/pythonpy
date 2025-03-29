@@ -1,5 +1,6 @@
 import unittest
-from python import tokeinze, parse
+import io
+from python import tokeinze, parse, evaluate
 from python import PrintNode
 
 
@@ -49,7 +50,15 @@ class TestParse(unittest.TestCase):
                 with self.assertRaises(SyntaxError):
                     parse(spec['tokens'])
 
-# TODO: add testing evaluate
+
+class TestEvaluate(unittest.TestCase):
+    def test(self):
+        node = PrintNode()
+        fout = io.StringIO()
+        evaluate(node, fout)
+        self.assertEqual(fout.getvalue(), "\n")
+
+    # TODO: add error case
 
 
 if __name__ == "__main__":

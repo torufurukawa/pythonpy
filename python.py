@@ -20,8 +20,8 @@ def parse(tokens):
         raise SyntaxError("Failed to parse")
 
 
-def evaluate(node):
-    pass
+def evaluate(node, fout):
+    print(file=fout)
 
 
 class PrintNode:
