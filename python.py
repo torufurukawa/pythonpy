@@ -28,4 +28,5 @@ def evaluate(node, fout):
 
 
 class PrintNode:
-    pass
+    def __init__(self, value=None):
+        self.value = value

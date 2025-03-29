@@ -67,8 +67,18 @@ class TestEvaluate(unittest.TestCase):
                     evaluate(node, fout)
 
 
+class TestPrintNode(unittest.TestCase):
+    def test_init_without_args(self):
+        node = PrintNode()
+        self.assertIsNone(node.value)
+
+    def test_init_with_args(self):
+        val = 123
+        node = PrintNode(val)
+        self.assertEqual(node.value, val)
+
+
 # TODO: add print(123) case
-# DOING: test main()
 class TestPython(unittest.TestCase):
     def test(self):
         # given
