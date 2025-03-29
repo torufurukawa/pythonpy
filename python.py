@@ -1,8 +1,8 @@
-def main():
-    code = "print()"
+def main(fin, fout):
+    code = fin.getvalue()
     tokens = tokeinze(code)
     ast = parse(tokens)
-    evaluate(ast)
+    evaluate(ast, fout)
 
 
 def tokeinze(code):
@@ -29,7 +29,3 @@ def evaluate(node, fout):
 
 class PrintNode:
     pass
-
-
-if __name__ == "__main__":
-    main()

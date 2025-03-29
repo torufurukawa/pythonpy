@@ -1,6 +1,6 @@
 import unittest
 import io
-from python import tokeinze, parse, evaluate
+from python import tokeinze, parse, evaluate, main
 from python import PrintNode
 
 
@@ -65,6 +65,27 @@ class TestEvaluate(unittest.TestCase):
                 fout = io.StringIO()
                 with self.assertRaises(TypeError):
                     evaluate(node, fout)
+
+
+# TODO: add print(123) case
+# DOING: test main()
+class TestPython(unittest.TestCase):
+    def test(self):
+        # given
+        code = "print()"
+
+        # when
+        fin = io.StringIO(code)
+        fout = io.StringIO()
+        main(fin, fout)
+
+        # then
+        self.assertEqual(fout.getvalue(), "\n")
+
+
+# TODO: tokenize print(123)
+# TODO: evaluate PrintNode(123)
+# TODO: parse [print, (, 123, )]
 
 
 if __name__ == "__main__":
