@@ -22,7 +22,10 @@ def parse(tokens):
 
 def evaluate(node, fout):
     if isinstance(node, PrintNode):
-        print(file=fout)
+        if node.value is None:
+            print(file=fout)
+        else:
+            print(node.value, file=fout)
     else:
         raise TypeError("Unknown node type")
 

@@ -4,6 +4,7 @@ from python import tokeinze, parse, evaluate, main
 from python import PrintNode
 
 
+# TODO: tokenize print(123)
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -25,6 +26,7 @@ class TestTokenize(unittest.TestCase):
             tokeinze("log()")
 
 
+# TODO: parse [print, (, 123, )]
 class TestParse(unittest.TestCase):
     def test(self):
         specs = [
@@ -50,13 +52,20 @@ class TestParse(unittest.TestCase):
                 with self.assertRaises(SyntaxError):
                     parse(spec['tokens'])
 
-
 class TestEvaluate(unittest.TestCase):
-    def test(self):
+    def test_without_args(self):
         node = PrintNode()
         fout = io.StringIO()
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "\n")
+
+    # DOING: evaluate PrintNode(123)
+    def test_with_args(self):
+        val = 123
+        node = PrintNode(val)
+        fout = io.StringIO()
+        evaluate(node, fout)
+        self.assertEqual(fout.getvalue(), f"{val}\n")
 
     def test_errors(self):
         nodes = [None]
@@ -91,11 +100,6 @@ class TestPython(unittest.TestCase):
 
         # then
         self.assertEqual(fout.getvalue(), "\n")
-
-
-# TODO: tokenize print(123)
-# TODO: evaluate PrintNode(123)
-# TODO: parse [print, (, 123, )]
 
 
 if __name__ == "__main__":
