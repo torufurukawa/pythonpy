@@ -21,7 +21,10 @@ def parse(tokens):
 
 
 def evaluate(node, fout):
-    print(file=fout)
+    if isinstance(node, PrintNode):
+        print(file=fout)
+    else:
+        raise TypeError("Unknown node type")
 
 
 class PrintNode:

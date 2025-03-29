@@ -58,7 +58,13 @@ class TestEvaluate(unittest.TestCase):
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "\n")
 
-    # TODO: add error case
+    def test_errors(self):
+        nodes = [None]
+        for node in nodes:
+            with self.subTest(node=node):
+                fout = io.StringIO()
+                with self.assertRaises(TypeError):
+                    evaluate(node, fout)
 
 
 if __name__ == "__main__":
