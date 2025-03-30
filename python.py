@@ -27,6 +27,10 @@ def tokenize(code):
             tokens.append(("RPAREN", c))
             i += 1
 
+        elif c == "+":
+            tokens.append(("PLUS", c))
+            i += 1
+
         elif c.isdigit():
             start = i
             while i < len(code) and code[i].isdigit():

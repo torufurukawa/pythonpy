@@ -19,8 +19,11 @@ class TestTokenize(unittest.TestCase):
                     ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"),
                     ("RPAREN", ")")
                 ],
+            },
+            {
+                "code": "+",
+                "expected": [("PLUS", "+")],
             }
-
         ]
 
         for spec in specs:
@@ -33,6 +36,11 @@ class TestTokenize(unittest.TestCase):
             tokenize("log()")
 
 
+# TODO: add parse_atom()
+# TODO: add parse_expr()
+
+
+# TODO: add NUMBER + NUMBER
 class TestParse(unittest.TestCase):
     def test(self):
         specs = [
@@ -66,6 +74,9 @@ class TestParse(unittest.TestCase):
                     parse(spec['tokens'])
 
 
+# TODO: add evaluate_expr()
+
+# TODO: add using evaluate_expr()
 class TestEvaluate(unittest.TestCase):
     def test_without_args(self):
         node = PrintNode()
@@ -89,6 +100,9 @@ class TestEvaluate(unittest.TestCase):
                     evaluate(node, fout)
 
 
+# TODO: add BinOpNode
+
+
 class TestPrintNode(unittest.TestCase):
     def test_init_without_args(self):
         node = PrintNode()
@@ -100,6 +114,7 @@ class TestPrintNode(unittest.TestCase):
         self.assertEqual(node.value, val)
 
 
+# TODO: print(1+2)
 class TestPython(unittest.TestCase):
     def test(self):
         specs = [
