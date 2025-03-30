@@ -1,7 +1,7 @@
 import unittest
 import io
 from python import tokenize, parse, evaluate, main
-from python import PrintNode
+from python import PrintNode, BinOpNode
 
 
 class TestTokenize(unittest.TestCase):
@@ -100,7 +100,15 @@ class TestEvaluate(unittest.TestCase):
                     evaluate(node, fout)
 
 
-# TODO: add BinOpNode
+# TODO: add BinOpNode eq
+# TODO: add BinOpNode repr
+class TestBinOpNode(unittest.TestCase):
+    def test_init(self):
+        left, op, right = "1", "+", "2"
+        node = BinOpNode(left, op, right)
+        self.assertEqual(node.left, left)
+        self.assertEqual(node.op, op)
+        self.assertEqual(node.left, left)
 
 
 class TestPrintNode(unittest.TestCase):
