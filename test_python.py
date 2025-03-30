@@ -26,7 +26,6 @@ class TestTokenize(unittest.TestCase):
             tokeinze("log()")
 
 
-# TODO: parse [print, (, 123, )]
 class TestParse(unittest.TestCase):
     def test(self):
         specs = [
@@ -35,6 +34,12 @@ class TestParse(unittest.TestCase):
                     ("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")
                 ],
                 "expected": PrintNode()
+            },
+            {
+                "tokens": [
+                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"), ("RPAREN", ")")
+                ],
+                "expected": PrintNode(123)
             }
         ]
 
