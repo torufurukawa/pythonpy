@@ -1,6 +1,6 @@
 import unittest
 import io
-from python import tokeinze, parse, evaluate, main
+from python import tokenize, parse, evaluate, main
 from python import PrintNode
 
 
@@ -25,12 +25,12 @@ class TestTokenize(unittest.TestCase):
 
         for spec in specs:
             with self.subTest(spec=spec):
-                tokens = tokeinze(spec['code'])
+                tokens = tokenize(spec['code'])
                 self.assertEqual(tokens, spec['expected'])
 
     def test_syntax_erros(self):
         with self.assertRaises(SyntaxError):
-            tokeinze("log()")
+            tokenize("log()")
 
 
 class TestParse(unittest.TestCase):

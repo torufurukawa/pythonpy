@@ -1,11 +1,11 @@
 def main(fin, fout):
     code = fin.getvalue()
-    tokens = tokeinze(code)
+    tokens = tokenize(code)
     ast = parse(tokens)
     evaluate(ast, fout)
 
 
-def tokeinze(code):
+def tokenize(code):
     tokens = []
     i = 0
 
@@ -67,3 +67,6 @@ class PrintNode:
 
     def __eq__(self, other):
         return isinstance(other, PrintNode) and self.value == other.value
+
+    def __repr__(self):
+        return f"PrintNode({self.value})"
