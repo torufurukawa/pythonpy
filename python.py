@@ -33,3 +33,6 @@ def evaluate(node, fout):
 class PrintNode:
     def __init__(self, value=None):
         self.value = value
+
+    def __eq__(self, other):
+        return isinstance(other, PrintNode) and self.value == other.value

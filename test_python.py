@@ -34,14 +34,14 @@ class TestParse(unittest.TestCase):
                 "tokens": [
                     ("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")
                 ],
-                "expected": PrintNode
+                "expected": PrintNode()
             }
         ]
 
         for spec in specs:
             with self.subTest(spec=spec):
                 ast = parse(spec['tokens'])
-                self.assertIsInstance(ast, spec['expected'])
+                self.assertEqual(ast, spec['expected'])
 
     def test_errors(self):
         specs = [
@@ -59,7 +59,6 @@ class TestEvaluate(unittest.TestCase):
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "\n")
 
-    # DOING: evaluate PrintNode(123)
     def test_with_args(self):
         val = 123
         node = PrintNode(val)
