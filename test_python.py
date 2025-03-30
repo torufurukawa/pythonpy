@@ -4,7 +4,6 @@ from python import tokeinze, parse, evaluate, main
 from python import PrintNode
 
 
-# TODO: tokenize print(123)
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -13,7 +12,15 @@ class TestTokenize(unittest.TestCase):
                 "expected": [
                     ("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")
                 ],
+            },
+            {
+                "code": "print(123)",
+                "expected": [
+                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"),
+                    ("RPAREN", ")")
+                ],
             }
+
         ]
 
         for spec in specs:
@@ -37,7 +44,8 @@ class TestParse(unittest.TestCase):
             },
             {
                 "tokens": [
-                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"), ("RPAREN", ")")
+                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"),
+                    ("RPAREN", ")")
                 ],
                 "expected": PrintNode(123)
             }
@@ -56,6 +64,7 @@ class TestParse(unittest.TestCase):
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
                     parse(spec['tokens'])
+
 
 class TestEvaluate(unittest.TestCase):
     def test_without_args(self):
@@ -91,19 +100,19 @@ class TestPrintNode(unittest.TestCase):
         self.assertEqual(node.value, val)
 
 
-# TODO: add print(123) case
 class TestPython(unittest.TestCase):
     def test(self):
-        # given
-        code = "print()"
+        specs = [
+            {"code": "print()", "expected": "\n"},
+            {"code": "print(123)", "expected": "123\n"}
+        ]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                fin = io.StringIO(spec['code'])
+                fout = io.StringIO()
+                main(fin, fout)
 
-        # when
-        fin = io.StringIO(code)
-        fout = io.StringIO()
-        main(fin, fout)
-
-        # then
-        self.assertEqual(fout.getvalue(), "\n")
+                self.assertEqual(fout.getvalue(), spec['expected'])
 
 
 if __name__ == "__main__":

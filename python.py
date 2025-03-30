@@ -6,18 +6,46 @@ def main(fin, fout):
 
 
 def tokeinze(code):
-    code = code.strip()
-    if code == "print()":
-        return [("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")]
-    else:
-        raise SyntaxError("Unsupported statement")
+    tokens = []
+    i = 0
+
+    while i < len(code):
+        c = code[i]
+
+        if c in ' \t\n':
+            i += 1
+
+        elif code[i:].startswith("print", i):
+            tokens.append(("PRINT", "print"))
+            i += 5
+
+        elif c == "(":
+            tokens.append(("LPAREN", c))
+            i += 1
+
+        elif c == ")":
+            tokens.append(("RPAREN", c))
+            i += 1
+
+        elif c.isdigit():
+            start = i
+            while i < len(code) and code[i].isdigit():
+                i += 1
+            number = code[start:i]
+            tokens.append(("NUMBER", number))
+
+        else:
+            raise SyntaxError(f"Unexpected character: '{c}' at position {i}")
+
+    return tokens
 
 
 def parse(tokens):
     if tokens == [("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")]:
         return PrintNode()
     elif (len(tokens) == 4 and
-          [type_ for type_, _ in tokens] == ["PRINT", "LPAREN", "NUMBER", "RPAREN"]):
+          [type_ for type_, _ in tokens] == ["PRINT", "LPAREN", "NUMBER",
+                                             "RPAREN"]):
         return PrintNode(int(tokens[2][1]))
     else:
         raise SyntaxError("Failed to parse")
