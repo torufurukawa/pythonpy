@@ -1,6 +1,6 @@
 import unittest
 import io
-from python import tokenize, parse, evaluate, main
+from python import tokenize, parse, parse_atom, evaluate, main
 from python import PrintNode, BinOpNode
 
 
@@ -36,7 +36,21 @@ class TestTokenize(unittest.TestCase):
             tokenize("log()")
 
 
-# TODO: add parse_atom()
+# TODO: define Token data structure?
+
+class TestParseAtom(unittest.TestCase):
+    def test(self):
+        for val in [42, 3]:
+            token = ("NUMBER", str(val))
+            result = parse_atom(token)
+            self.assertEqual(result, val)
+
+    def test_error(self):
+        token = ("LPAREN", ")")
+        with self.assertRaises(SyntaxError):
+            parse_atom(token)
+
+
 # TODO: add parse_expr()
 
 
