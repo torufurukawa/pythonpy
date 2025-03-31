@@ -100,8 +100,6 @@ class TestEvaluate(unittest.TestCase):
                     evaluate(node, fout)
 
 
-# TODO: add BinOpNode eq
-# TODO: add BinOpNode repr
 class TestBinOpNode(unittest.TestCase):
     def test_init(self):
         left, op, right = "1", "+", "2"
@@ -109,6 +107,16 @@ class TestBinOpNode(unittest.TestCase):
         self.assertEqual(node.left, left)
         self.assertEqual(node.op, op)
         self.assertEqual(node.left, left)
+
+    def test_eq(self):
+        a = BinOpNode("1", "+", "2")
+        b = BinOpNode("1", "+", "2")
+        self.assertEqual(a, b)
+
+    def test_not_eq(self):
+        a = BinOpNode("1", "+", "2")
+        b = BinOpNode("3", "+", "7")
+        self.assertNotEqual(a, b)
 
 
 class TestPrintNode(unittest.TestCase):

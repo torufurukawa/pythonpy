@@ -81,3 +81,14 @@ class BinOpNode:
         self.left = left
         self.op = op
         self.right = right
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, BinOpNode) and
+            self.left == other.left and
+            self.op == other.op and
+            self.right == other.right
+        )
+
+    def __repr__(self):
+        return f"BinOpNode({self.left}, {self.op}, {self.right})"
