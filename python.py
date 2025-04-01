@@ -63,6 +63,11 @@ def parse_atom(token):
         raise SyntaxError("Expected a number")
 
 
+def parse_expr(tokens):
+    if (len(tokens) == 1) and (tokens[0][0] == "NUMBER"):
+        return parse_atom(tokens[0])
+
+
 def evaluate(node, fout):
     if isinstance(node, PrintNode):
         if node.value is None:
