@@ -49,7 +49,6 @@ class TestParseAtom(unittest.TestCase):
             parse_atom(token)
 
 
-# TODO: parse_exper() => execption
 class TestParseExpr(unittest.TestCase):
     def test(self):
         specs = [
@@ -63,6 +62,13 @@ class TestParseExpr(unittest.TestCase):
             with self.subTest(spec=spec):
                 result = parse_expr(spec['tokens'])
                 self.assertEqual(result, spec['expected'])
+
+    def test_exceptions(self):
+        specs = [{"tokens": [("NUMBER", "2"), ("PLUS", "+")]}]
+        for spec in specs:
+            with self.subTest(sepc=spec):
+                with self.assertRaises(SyntaxError):
+                    parse_expr(spec['tokens'])
 
 
 # TODO: add NUMBER + NUMBER

@@ -73,6 +73,8 @@ def parse_expr(tokens):
         left = parse_atom(tokens[0])
         right = parse_atom(tokens[2])
         return BinOpNode(left, "+", right)
+    else:
+        raise SyntaxError("Unsupported expression")
 
 
 def evaluate(node, fout):
