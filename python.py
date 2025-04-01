@@ -66,6 +66,13 @@ def parse_atom(token):
 def parse_expr(tokens):
     if (len(tokens) == 1) and (tokens[0][0] == "NUMBER"):
         return parse_atom(tokens[0])
+    elif (len(tokens) == 3 and
+          tokens[0][0] == "NUMBER" and
+          tokens[1][0] == "PLUS" and
+          tokens[2][0] == "NUMBER"):
+        left = parse_atom(tokens[0])
+        right = parse_atom(tokens[2])
+        return BinOpNode(left, "+", right)
 
 
 def evaluate(node, fout):

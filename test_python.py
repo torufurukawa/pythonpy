@@ -50,11 +50,14 @@ class TestParseAtom(unittest.TestCase):
 
 
 # TODO: parse_exper() => execption
-# TODO: parse_expr(expr-tokens) => BinOpNode
 class TestParseExpr(unittest.TestCase):
     def test(self):
         specs = [
-            {"tokens": [("NUMBER", "42")], "expected": 42}
+            {"tokens": [("NUMBER", "42")], "expected": 42},
+            {
+                "tokens": [("NUMBER", "2"), ("PLUS", "+"), ("NUMBER", "3")],
+                "expected": BinOpNode(2, "+", 3)
+            }
         ]
         for spec in specs:
             with self.subTest(spec=spec):
