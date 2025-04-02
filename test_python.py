@@ -71,7 +71,6 @@ class TestParseExpr(unittest.TestCase):
                     parse_expr(spec['tokens'])
 
 
-# TODO: add NUMBER + NUMBER
 class TestParse(unittest.TestCase):
     def test(self):
         specs = [
@@ -87,6 +86,13 @@ class TestParse(unittest.TestCase):
                     ("RPAREN", ")")
                 ],
                 "expected": PrintNode(123)
+            },
+            {
+                "tokens": [
+                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "2"),
+                    ("PLUS", "+"), ("NUMBER", "3"), ("RPAREN", ")")
+                ],
+                "expected": PrintNode(BinOpNode(2, "+", 3))
             }
         ]
 

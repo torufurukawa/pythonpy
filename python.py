@@ -47,10 +47,12 @@ def tokenize(code):
 def parse(tokens):
     if tokens == [("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")]:
         return PrintNode()
-    elif (len(tokens) == 4 and
-          [type_ for type_, _ in tokens] == ["PRINT", "LPAREN", "NUMBER",
-                                             "RPAREN"]):
-        return PrintNode(int(tokens[2][1]))
+    elif (tokens[0][0] == "PRINT" and
+          tokens[1][0] == "LPAREN" and
+          tokens[-1][0] == "RPAREN"):
+        inner_tokens = tokens[2:-1]
+        expr = parse_expr(inner_tokens)
+        return PrintNode(expr)
     else:
         raise SyntaxError("Failed to parse")
 
