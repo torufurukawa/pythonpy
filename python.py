@@ -89,6 +89,11 @@ def evaluate(node, fout):
         raise TypeError("Unknown node type")
 
 
+def evaluate_expr(expr):
+    if isinstance(expr, int):
+        return expr
+
+
 class PrintNode:
     def __init__(self, value=None):
         self.value = value

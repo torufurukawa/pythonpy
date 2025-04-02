@@ -1,7 +1,10 @@
 import unittest
 import io
-from python import tokenize, parse, parse_atom, parse_expr, evaluate, main
+from python import tokenize
+from python import parse, parse_atom, parse_expr
+from python import evaluate, evaluate_expr
 from python import PrintNode, BinOpNode
+from python import main
 
 
 class TestTokenize(unittest.TestCase):
@@ -111,7 +114,17 @@ class TestParse(unittest.TestCase):
                     parse(spec['tokens'])
 
 
-# TODO: add evaluate_expr()
+# TODO: evaluate_expr(2+3) -> 5
+# TODO: evaluate_expr(2-3) -> ValueError
+# TODO: evaluate_expr(None) -> SyntaxError
+class TestEvaluatExpr(unittest.TestCase):
+    def test(self):
+        specs = [{"expr": 2, "expected": 2}]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                result = evaluate_expr(spec['expr'])
+                self.assertEqual(result, spec['expected'])
+
 
 # TODO: add using evaluate_expr()
 class TestEvaluate(unittest.TestCase):
