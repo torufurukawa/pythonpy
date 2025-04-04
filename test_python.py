@@ -125,8 +125,15 @@ class TestEvaluatExpr(unittest.TestCase):
                 result = evaluate_expr(spec['expr'])
                 self.assertEqual(result, spec['expected'])
 
-# TODO: evaluate_expr(2-3) -> ValueError
-# TODO: evaluate_expr(None) -> SyntaxError
+    def test_exceptions(self):
+        specs = [
+            {"expr": BinOpNode(2, "-", 3), "exception": ValueError},
+            {"expr": None, "exception": TypeError},
+        ]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                with self.assertRaises(spec['exception']):
+                    evaluate_expr(spec['expr'])
 
 
 # TODO: add using evaluate_expr()

@@ -99,6 +99,8 @@ def evaluate_expr(expr):
             return left + right
         else:
             raise ValueError(f"Unknown operator: {expr.op}")
+    else:
+        raise TypeError(f"Unsupported expression node")
 
 
 class PrintNode:
