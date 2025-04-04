@@ -100,7 +100,7 @@ def evaluate_expr(expr):
         else:
             raise ValueError(f"Unknown operator: {expr.op}")
     else:
-        raise TypeError(f"Unsupported expression node")
+        raise TypeError("Unsupported expression node")
 
 
 class PrintNode:
