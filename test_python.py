@@ -136,7 +136,6 @@ class TestEvaluatExpr(unittest.TestCase):
                     evaluate_expr(spec['expr'])
 
 
-# TODO: add using evaluate_expr()
 class TestEvaluate(unittest.TestCase):
     def test_without_args(self):
         node = PrintNode()
@@ -158,6 +157,12 @@ class TestEvaluate(unittest.TestCase):
                 fout = io.StringIO()
                 with self.assertRaises(TypeError):
                     evaluate(node, fout)
+
+    def test_plus_expr(self):
+        node = PrintNode(BinOpNode(2, "+", 3))
+        fout = io.StringIO()
+        evaluate(node, fout)
+        self.assertEqual(fout.getvalue(), "5\n")
 
 
 class TestBinOpNode(unittest.TestCase):

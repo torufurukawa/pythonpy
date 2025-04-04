@@ -84,7 +84,8 @@ def evaluate(node, fout):
         if node.value is None:
             print(file=fout)
         else:
-            print(node.value, file=fout)
+            result = evaluate_expr(node.value)
+            print(result, file=fout)
     else:
         raise TypeError("Unknown node type")
 
