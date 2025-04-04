@@ -114,16 +114,19 @@ class TestParse(unittest.TestCase):
                     parse(spec['tokens'])
 
 
-# TODO: evaluate_expr(2+3) -> 5
-# TODO: evaluate_expr(2-3) -> ValueError
-# TODO: evaluate_expr(None) -> SyntaxError
 class TestEvaluatExpr(unittest.TestCase):
     def test(self):
-        specs = [{"expr": 2, "expected": 2}]
+        specs = [
+            {"expr": 2, "expected": 2},
+            {"expr": BinOpNode(2, "+", 3), "expected": 5}
+        ]
         for spec in specs:
             with self.subTest(spec=spec):
                 result = evaluate_expr(spec['expr'])
                 self.assertEqual(result, spec['expected'])
+
+# TODO: evaluate_expr(2-3) -> ValueError
+# TODO: evaluate_expr(None) -> SyntaxError
 
 
 # TODO: add using evaluate_expr()
