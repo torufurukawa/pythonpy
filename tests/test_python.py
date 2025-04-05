@@ -1,11 +1,10 @@
 import unittest
 import io
-from python import Token
-from python import tokenize
-from python import parse, parse_atom, parse_expr
-from python import evaluate, evaluate_expr
-from python import PrintNode, BinOpNode
-from python import main
+from pythonpy.lexer import Token, tokenize
+from pythonpy.parser import parse, parse_atom, parse_expr
+from pythonpy.evaluator import evaluate, evaluate_expr
+from pythonpy.nodes import PrintNode, BinOpNode
+from pythonpy.main import main
 
 
 class TestTokenize(unittest.TestCase):
