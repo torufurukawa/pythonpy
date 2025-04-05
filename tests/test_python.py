@@ -7,6 +7,15 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
+# TODO: tokenize "*" => MULTIPLY
+# TODO: tokenize "/" => DIVIDE
+# TODO: parse_expr handles MULTIPY and DIVIDE
+# TODO: evaluate_expr handles MULTIPY and DIVIDE
+# TODO: evaluate_expr raises ValueError(division by zero)
+# TODO: print(3*4) => 12
+# TODO: print(6/2) => 3
+# TODO: print(2*3/3+1-1) => 2
+
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
