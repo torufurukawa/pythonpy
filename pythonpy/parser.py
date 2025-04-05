@@ -74,3 +74,14 @@ def parse_factor(tokens, i):
         raise SyntaxError(f"Unexpected token in factor: {token}")
 
     return int(token.value), i+1
+
+
+def parse_term(tokens, i):
+    node, i = parse_factor(tokens, i)
+
+    while i < len(tokens) and tokens[i].type in ["MULTIPLY", "DIVIDE"]:
+        op = tokens[i].value
+        right, i = parse_factor(tokens, i + 1)
+        node = BinOpNode(node, op, right)
+
+    return node, i

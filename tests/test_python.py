@@ -1,13 +1,13 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize
-from pythonpy.parser import parse, parse_atom, parse_expr, parse_factor
+from pythonpy.parser import parse
+from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_term() handles multiply and divide
 # TODO: parse_term() uses parse_factor()
 # TODO: parse_expr() handles plus and minus only
 # TODO: parse_expr() uses parse_term()
@@ -226,6 +226,44 @@ class TestParseFactor(unittest.TestCase):
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
                     parse_factor(tokens, spec['index'])
+
+
+class TestParseTerm(unittest.TestCase):
+    def test(self):
+        specs = [
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3")
+                 ],
+                "index": 0,
+                "expected": (2, 1)
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("MULTIPLY", "*"),
+                    Token("NUMBER", "3")
+                 ],
+                "index": 0,
+                "expected": (BinOpNode(2, "*", 3), 3)
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("DIVIDE", "/"),
+                    Token("NUMBER", "3")
+                 ],
+                "index": 0,
+                "expected": (BinOpNode(2, "/", 3), 3)
+            },
+        ]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                node, i = parse_term(spec['tokens'], spec['index'])
+                self.assertEqual((node, i), spec['expected'])
 
 
 class TestEvaluatExpr(unittest.TestCase):
