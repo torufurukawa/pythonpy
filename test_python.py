@@ -238,13 +238,13 @@ class TestPrintNode(unittest.TestCase):
         self.assertEqual(node.value, val)
 
 
-# TODO: print(2+3+5)
 class TestPython(unittest.TestCase):
     def test(self):
         specs = [
             {"code": "print()", "expected": "\n"},
             {"code": "print(123)", "expected": "123\n"},
             {"code": "print(2+3)", "expected": "5\n"},
+            {"code": "print(2+3+5)", "expected": "10\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
