@@ -20,6 +20,8 @@ def evaluate_expr(expr):
         right = evaluate_expr(expr.right)
         if expr.op == "+":
             return left + right
+        elif expr.op == "-":
+            return left - right
         else:
             raise ValueError(f"Unknown operator: {expr.op}")
     else:

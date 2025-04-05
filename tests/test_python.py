@@ -31,6 +31,10 @@ class TestTokenize(unittest.TestCase):
                 "code": "+",
                 "expected": [Token("PLUS", "+")],
             },
+            {
+                "code": "-",
+                "expected": [Token("MINUS", "-")],
+            },
         ]
 
         for spec in specs:
@@ -77,6 +81,16 @@ class TestParseExpr(unittest.TestCase):
                     Token("NUMBER", "5"),
                 ],
                 "expected": BinOpNode(BinOpNode(2, "+", 3), "+", 5),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("MINUS", "-"),
+                    Token("NUMBER", "5"),
+                ],
+                "expected": BinOpNode(BinOpNode(2, "+", 3), "-", 5),
             },
             {
                 "tokens": [
@@ -161,6 +175,7 @@ class TestEvaluatExpr(unittest.TestCase):
         specs = [
             {"expr": 2, "expected": 2},
             {"expr": BinOpNode(2, "+", 3), "expected": 5},
+            {"expr": BinOpNode(2, "-", 3), "expected": -1},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
@@ -169,7 +184,7 @@ class TestEvaluatExpr(unittest.TestCase):
 
     def test_exceptions(self):
         specs = [
-            {"expr": BinOpNode(2, "-", 3), "exception": ValueError},
+            {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
             {"expr": None, "exception": TypeError},
         ]
         for spec in specs:
@@ -244,6 +259,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(123)", "expected": "123\n"},
             {"code": "print(2+3)", "expected": "5\n"},
             {"code": "print(2+3+5)", "expected": "10\n"},
+            {"code": "print(2+3-5)", "expected": "0\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
