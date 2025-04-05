@@ -69,14 +69,42 @@ class TestParseExpr(unittest.TestCase):
                 ],
                 "expected": BinOpNode(2, "+", 3),
             },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "5"),
+                ],
+                "expected": BinOpNode(BinOpNode(2, "+", 3), "+", 5),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "5"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "7"),
+                ],
+                "expected": BinOpNode(
+                                BinOpNode(
+                                    BinOpNode(2, "+", 3), "+", 5), "+", 7),
+            },
         ]
         for spec in specs:
             with self.subTest(spec=spec):
                 result = parse_expr(spec["tokens"])
                 self.assertEqual(result, spec["expected"])
 
-    def test_exceptions(self):
-        specs = [{"tokens": [Token("NUMBER", "2"), Token("PLUS", "+")]}]
+    def test_syntax_error(self):
+        specs = [
+            {"tokens": [Token("NUMBER", "2"), Token("PLUS", "+")]},
+            {"tokens": [Token("NUMBER", "2"), Token("ERROR", "~")]},
+            {"tokens": []},
+        ]
         for spec in specs:
             with self.subTest(sepc=spec):
                 with self.assertRaises(SyntaxError):
@@ -216,6 +244,7 @@ class TestPython(unittest.TestCase):
             {"code": "print()", "expected": "\n"},
             {"code": "print(123)", "expected": "123\n"},
             {"code": "print(2+3)", "expected": "5\n"},
+            {"code": "print(2+3+5)", "expected": "10\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):

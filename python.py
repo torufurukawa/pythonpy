@@ -81,6 +81,26 @@ def parse_atom(token):
 
 
 def parse_expr(tokens):
+    if not tokens:
+        raise SyntaxError("Empty expression")
+
+    left = parse_atom(tokens[0])
+    i = 1
+
+    while i < len(tokens):
+        if tokens[i].type == "PLUS":
+            if len(tokens) <= i + 1:
+                raise SyntaxError("Expected right-hand operand after '+'")
+
+            op = tokens[i].value
+            right = parse_atom(tokens[i + 1])
+            left = BinOpNode(left, op, right)
+            i += 2
+        else:
+            raise SyntaxError(f"Unexpected token: {tokens[i]}")
+
+    return left
+
     if (len(tokens) == 1) and (tokens[0].type == "NUMBER"):
         return parse_atom(tokens[0])
     elif (
