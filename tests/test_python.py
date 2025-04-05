@@ -7,8 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_factor() raies SyntaxError in missing case
-# TODO: parse_ractor() raises SyntaxError in non number case
 # TODO: parse_term() handles multiply and divide
 # TODO: parse_term() uses parse_factor()
 # TODO: parse_expr() handles plus and minus only
@@ -219,6 +217,15 @@ class TestParseFactor(unittest.TestCase):
         value, i = parse_factor(tokens, 2)
         self.assertEqual(value, right)
         self.assertEqual(i, 3)
+
+    def test_syntax_error(self):
+        tokens = [Token("NUMBER", 1), Token("PLUS", "+")]
+        specs = [{"index": 1}, {"index": 2}]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                with self.assertRaises(SyntaxError):
+                    parse_factor(tokens, spec['index'])
 
 
 class TestEvaluatExpr(unittest.TestCase):

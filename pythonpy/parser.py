@@ -66,6 +66,11 @@ def parse_expr(tokens):
 
 
 def parse_factor(tokens, i):
+    if len(tokens) <= i:
+        raise SyntaxError("Expected number")
+
     token = tokens[i]
-    if token.type == "NUMBER":
-        return int(token.value), i+1
+    if token.type != "NUMBER":
+        raise SyntaxError(f"Unexpected token in factor: {token}")
+
+    return int(token.value), i+1
