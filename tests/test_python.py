@@ -1,7 +1,7 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize
-from pythonpy.parser import parse, parse_atom, parse_expr
+from pythonpy.parser import parse, parse_atom, parse_expr, parse_factor
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
@@ -204,9 +204,21 @@ class TestParse(unittest.TestCase):
                     parse(spec["tokens"])
 
 
-# TODO: parse_factor() consumes number
 class TestParseFactor(unittest.TestCase):
-    pass
+    def test(self):
+        left = 1
+        right = 2
+        tokens = [
+            Token("NUMBER", left), Token("PLUS", "+"), Token("NUMBER", right)
+        ]
+
+        value, i = parse_factor(tokens, 0)
+        self.assertEqual(value, left)
+        self.assertEqual(i, 1)
+
+        value, i = parse_factor(tokens, 2)
+        self.assertEqual(value, right)
+        self.assertEqual(i, 3)
 
 
 class TestEvaluatExpr(unittest.TestCase):

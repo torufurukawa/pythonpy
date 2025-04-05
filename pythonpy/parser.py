@@ -63,3 +63,9 @@ def parse_expr(tokens):
         return BinOpNode(left, "+", right)
     else:
         raise SyntaxError("Unsupported expression")
+
+
+def parse_factor(tokens, i):
+    token = tokens[i]
+    if token.type == "NUMBER":
+        return int(token.value), i+1
