@@ -231,13 +231,8 @@ class TestToken(unittest.TestCase):
         type_ = "NUMBER"
         value = 3
         token = Token(type_, value)
-        self.assertEqual(token[0], type_)
-        self.assertEqual(token[1], value)
         self.assertEqual(token.type, type_)
         self.assertEqual(token.value, value)
-
-
-# TODO: Token as dataclass
 
 
 if __name__ == "__main__":

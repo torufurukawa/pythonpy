@@ -1,4 +1,4 @@
-from collections import namedtuple
+from dataclasses import dataclass
 
 
 def main(fin, fout):
@@ -8,7 +8,10 @@ def main(fin, fout):
     evaluate(ast, fout)
 
 
-Token = namedtuple("Token", ["type", "value"])
+@dataclass
+class Token:
+    type: str
+    value: str
 
 
 def tokenize(code):
