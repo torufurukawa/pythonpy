@@ -7,7 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: evaluate_expr() handles "-" op
 # TODO: "print(2+3-5)" => 0
 
 class TestTokenize(unittest.TestCase):
@@ -178,6 +177,7 @@ class TestEvaluatExpr(unittest.TestCase):
         specs = [
             {"expr": 2, "expected": 2},
             {"expr": BinOpNode(2, "+", 3), "expected": 5},
+            {"expr": BinOpNode(2, "-", 3), "expected": -1},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
@@ -186,7 +186,7 @@ class TestEvaluatExpr(unittest.TestCase):
 
     def test_exceptions(self):
         specs = [
-            {"expr": BinOpNode(2, "-", 3), "exception": ValueError},
+            {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
             {"expr": None, "exception": TypeError},
         ]
         for spec in specs:
