@@ -7,7 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_expr() checks "MINUS" token
 # TODO: evaluate_expr() handles "-" op
 # TODO: "print(2+3-5)" => 0
 
@@ -85,6 +84,16 @@ class TestParseExpr(unittest.TestCase):
                     Token("NUMBER", "5"),
                 ],
                 "expected": BinOpNode(BinOpNode(2, "+", 3), "+", 5),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("MINUS", "-"),
+                    Token("NUMBER", "5"),
+                ],
+                "expected": BinOpNode(BinOpNode(2, "+", 3), "-", 5),
             },
             {
                 "tokens": [

@@ -36,7 +36,7 @@ def parse_expr(tokens):
     i = 1
 
     while i < len(tokens):
-        if tokens[i].type == "PLUS":
+        if tokens[i].type in ["PLUS", "MINUS"]:
             if len(tokens) <= i + 1:
                 raise SyntaxError("Expected right-hand operand after '+'")
 
