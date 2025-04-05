@@ -8,10 +8,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_expr_wrapper() wraps parse_expr()
-# TODO: parse() uses parser_expr_wrapper() instead of parse_expr()
-# TODO: print(2+3*4) => 14
-
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -368,7 +364,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(2+3-5)", "expected": "0\n"},
             {"code": "print(3*4)", "expected": "12\n"},
             {"code": "print(6/2)", "expected": "3\n"},
-            {"code": "print(2*3/3+1-1)", "expected": "2\n"},
+            {"code": "print(2+3*4)", "expected": "14\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
