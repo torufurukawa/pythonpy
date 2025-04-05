@@ -7,7 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_expr handles MULTIPY and DIVIDE
 # TODO: evaluate_expr handles MULTIPY and DIVIDE
 # TODO: evaluate_expr raises ValueError(division by zero)
 # TODO: print(3*4) => 12
@@ -86,6 +85,22 @@ class TestParseExpr(unittest.TestCase):
                     Token("NUMBER", "3"),
                 ],
                 "expected": BinOpNode(2, "+", 3),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("MULTIPLY", "*"),
+                    Token("NUMBER", "3"),
+                ],
+                "expected": BinOpNode(2, "*", 3),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "4"),
+                    Token("PLUS", "/"),
+                    Token("NUMBER", "2"),
+                ],
+                "expected": BinOpNode(4, "/", 2),
             },
             {
                 "tokens": [
