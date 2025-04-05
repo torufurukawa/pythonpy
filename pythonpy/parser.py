@@ -36,9 +36,10 @@ def parse_expr(tokens):
     i = 1
 
     while i < len(tokens):
-        if tokens[i].type in ["PLUS", "MINUS"]:
+        if tokens[i].type in ["PLUS", "MINUS", "MULTIPLY", "DIVIDE"]:
             if len(tokens) <= i + 1:
-                raise SyntaxError("Expected right-hand operand after '+'")
+                op = tokens[i].value
+                raise SyntaxError(f"Expected right-hand operand after {op}")
 
             op = tokens[i].value
             right = parse_atom(tokens[i + 1])

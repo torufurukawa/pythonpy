@@ -35,6 +35,14 @@ class TestTokenize(unittest.TestCase):
                 "code": "-",
                 "expected": [Token("MINUS", "-")],
             },
+            {
+                "code": "*",
+                "expected": [Token("MULTIPLY", "*")]
+            },
+            {
+                "code": "/",
+                "expected": [Token("DIVIDE", "/")],
+            },
         ]
 
         for spec in specs:
@@ -71,6 +79,22 @@ class TestParseExpr(unittest.TestCase):
                     Token("NUMBER", "3"),
                 ],
                 "expected": BinOpNode(2, "+", 3),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("MULTIPLY", "*"),
+                    Token("NUMBER", "3"),
+                ],
+                "expected": BinOpNode(2, "*", 3),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "4"),
+                    Token("PLUS", "/"),
+                    Token("NUMBER", "2"),
+                ],
+                "expected": BinOpNode(4, "/", 2),
             },
             {
                 "tokens": [
@@ -176,6 +200,8 @@ class TestEvaluatExpr(unittest.TestCase):
             {"expr": 2, "expected": 2},
             {"expr": BinOpNode(2, "+", 3), "expected": 5},
             {"expr": BinOpNode(2, "-", 3), "expected": -1},
+            {"expr": BinOpNode(2, "*", 3), "expected": 6},
+            {"expr": BinOpNode(6, "/", 3), "expected": 2},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
@@ -186,6 +212,7 @@ class TestEvaluatExpr(unittest.TestCase):
         specs = [
             {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
             {"expr": None, "exception": TypeError},
+            {"expr": BinOpNode(2, "/", 0), "exception": ValueError},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
@@ -260,6 +287,9 @@ class TestPython(unittest.TestCase):
             {"code": "print(2+3)", "expected": "5\n"},
             {"code": "print(2+3+5)", "expected": "10\n"},
             {"code": "print(2+3-5)", "expected": "0\n"},
+            {"code": "print(3*4)", "expected": "12\n"},
+            {"code": "print(6/2)", "expected": "3\n"},
+            {"code": "print(2*3/3+1-1)", "expected": "2\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):

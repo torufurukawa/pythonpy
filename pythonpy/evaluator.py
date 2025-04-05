@@ -22,6 +22,12 @@ def evaluate_expr(expr):
             return left + right
         elif expr.op == "-":
             return left - right
+        elif expr.op == "*":
+            return left * right
+        elif expr.op == "/":
+            if right == 0:
+                raise ValueError("Division by zero")
+            return left // right
         else:
             raise ValueError(f"Unknown operator: {expr.op}")
     else:
