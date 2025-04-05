@@ -37,6 +37,14 @@ def tokenize(code):
             tokens.append(Token("MINUS", c))
             i += 1
 
+        elif c == "*":
+            tokens.append(Token("MULTIPLY", c))
+            i += 1
+
+        elif c == "/":
+            tokens.append(Token("DIVIDE", c))
+            i += 1
+
         elif c.isdigit():
             start = i
             while i < len(code) and code[i].isdigit():

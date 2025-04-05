@@ -7,8 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: tokenize "*" => MULTIPLY
-# TODO: tokenize "/" => DIVIDE
 # TODO: parse_expr handles MULTIPY and DIVIDE
 # TODO: evaluate_expr handles MULTIPY and DIVIDE
 # TODO: evaluate_expr raises ValueError(division by zero)
@@ -43,6 +41,14 @@ class TestTokenize(unittest.TestCase):
             {
                 "code": "-",
                 "expected": [Token("MINUS", "-")],
+            },
+            {
+                "code": "*",
+                "expected": [Token("MULTIPLY", "*")]
+            },
+            {
+                "code": "/",
+                "expected": [Token("DIVIDE", "/")],
             },
         ]
 
