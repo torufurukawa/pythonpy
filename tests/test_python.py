@@ -7,6 +7,16 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
+# TODO: parse_factor() raies SyntaxError in missing case
+# TODO: parse_ractor() raises SyntaxError in non number case
+# TODO: parse_term() handles multiply and divide
+# TODO: parse_term() uses parse_factor()
+# TODO: parse_expr() handles plus and minus only
+# TODO: parse_expr() uses parse_term()
+# TODO: parse_expr_wrapper() wraps parse_expr()
+# TODO: parse() uses parser_expr_wrapper() instead of parse_expr()
+# TODO: print(2+3*4) => 14
+
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -192,6 +202,11 @@ class TestParse(unittest.TestCase):
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
                     parse(spec["tokens"])
+
+
+# TODO: parse_factor() consumes number
+class TestParseFactor(unittest.TestCase):
+    pass
 
 
 class TestEvaluatExpr(unittest.TestCase):
