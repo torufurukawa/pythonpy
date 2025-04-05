@@ -7,8 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: "print(2+3-5)" => 0
-
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -261,6 +259,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(123)", "expected": "123\n"},
             {"code": "print(2+3)", "expected": "5\n"},
             {"code": "print(2+3+5)", "expected": "10\n"},
+            {"code": "print(2+3-5)", "expected": "0\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
