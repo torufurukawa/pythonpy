@@ -1,8 +1,17 @@
+from dataclasses import dataclass
+
+
 def main(fin, fout):
     code = fin.getvalue()
     tokens = tokenize(code)
     ast = parse(tokens)
     evaluate(ast, fout)
+
+
+@dataclass
+class Token:
+    type: str
+    value: str
 
 
 def tokenize(code):
@@ -12,23 +21,23 @@ def tokenize(code):
     while i < len(code):
         c = code[i]
 
-        if c in ' \t\n':
+        if c in " \t\n":
             i += 1
 
         elif code[i:].startswith("print", i):
-            tokens.append(("PRINT", "print"))
+            tokens.append(Token("PRINT", "print"))
             i += 5
 
         elif c == "(":
-            tokens.append(("LPAREN", c))
+            tokens.append(Token("LPAREN", c))
             i += 1
 
         elif c == ")":
-            tokens.append(("RPAREN", c))
+            tokens.append(Token("RPAREN", c))
             i += 1
 
         elif c == "+":
-            tokens.append(("PLUS", c))
+            tokens.append(Token("PLUS", c))
             i += 1
 
         elif c.isdigit():
@@ -36,7 +45,7 @@ def tokenize(code):
             while i < len(code) and code[i].isdigit():
                 i += 1
             number = code[start:i]
-            tokens.append(("NUMBER", number))
+            tokens.append(Token("NUMBER", number))
 
         else:
             raise SyntaxError(f"Unexpected character: '{c}' at position {i}")
@@ -45,11 +54,18 @@ def tokenize(code):
 
 
 def parse(tokens):
-    if tokens == [("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")]:
+    if (
+        len(tokens) == 3
+        and tokens[0].type == "PRINT"
+        and tokens[1].type == "LPAREN"
+        and tokens[2].type == "RPAREN"
+    ):
         return PrintNode()
-    elif (tokens[0][0] == "PRINT" and
-          tokens[1][0] == "LPAREN" and
-          tokens[-1][0] == "RPAREN"):
+    elif (
+        tokens[0].type == "PRINT"
+        and tokens[1].type == "LPAREN"
+        and tokens[-1].type == "RPAREN"
+    ):
         inner_tokens = tokens[2:-1]
         expr = parse_expr(inner_tokens)
         return PrintNode(expr)
@@ -58,20 +74,21 @@ def parse(tokens):
 
 
 def parse_atom(token):
-    type_, value = token
-    if type_ == "NUMBER":
-        return int(value)
+    if token.type == "NUMBER":
+        return int(token.value)
     else:
         raise SyntaxError("Expected a number")
 
 
 def parse_expr(tokens):
-    if (len(tokens) == 1) and (tokens[0][0] == "NUMBER"):
+    if (len(tokens) == 1) and (tokens[0].type == "NUMBER"):
         return parse_atom(tokens[0])
-    elif (len(tokens) == 3 and
-          tokens[0][0] == "NUMBER" and
-          tokens[1][0] == "PLUS" and
-          tokens[2][0] == "NUMBER"):
+    elif (
+        len(tokens) == 3
+        and tokens[0].type == "NUMBER"
+        and tokens[1].type == "PLUS"
+        and tokens[2].type == "NUMBER"
+    ):
         left = parse_atom(tokens[0])
         right = parse_atom(tokens[2])
         return BinOpNode(left, "+", right)
@@ -123,10 +140,10 @@ class BinOpNode:
 
     def __eq__(self, other):
         return (
-            isinstance(other, BinOpNode) and
-            self.left == other.left and
-            self.op == other.op and
-            self.right == other.right
+            isinstance(other, BinOpNode)
+            and self.left == other.left
+            and self.op == other.op
+            and self.right == other.right
         )
 
     def __repr__(self):
