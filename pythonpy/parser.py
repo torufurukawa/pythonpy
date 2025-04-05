@@ -32,37 +32,16 @@ def parse_expr(tokens):
     if not tokens:
         raise SyntaxError("Empty expression")
 
-    left = parse_atom(tokens[0])
-    i = 1
-
+    node, i = parse_term(tokens, 0)
     while i < len(tokens):
-        if tokens[i].type in ["PLUS", "MINUS", "MULTIPLY", "DIVIDE"]:
-            if len(tokens) <= i + 1:
-                op = tokens[i].value
-                raise SyntaxError(f"Expected right-hand operand after {op}")
-
-            op = tokens[i].value
-            right = parse_atom(tokens[i + 1])
-            left = BinOpNode(left, op, right)
-            i += 2
-        else:
+        if tokens[i].type not in ("PLUS", "MINUS"):
             raise SyntaxError(f"Unexpected token: {tokens[i]}")
 
-    return left
+        op = tokens[i].value
+        right, i = parse_term(tokens, i+1)
+        node = BinOpNode(node, op, right)
 
-    if (len(tokens) == 1) and (tokens[0].type == "NUMBER"):
-        return parse_atom(tokens[0])
-    elif (
-        len(tokens) == 3
-        and tokens[0].type == "NUMBER"
-        and tokens[1].type == "PLUS"
-        and tokens[2].type == "NUMBER"
-    ):
-        left = parse_atom(tokens[0])
-        right = parse_atom(tokens[2])
-        return BinOpNode(left, "+", right)
-    else:
-        raise SyntaxError("Unsupported expression")
+    return node
 
 
 def parse_factor(tokens, i):

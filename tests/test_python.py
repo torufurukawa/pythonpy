@@ -8,9 +8,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_term() uses parse_factor()
-# TODO: parse_expr() handles plus and minus only
-# TODO: parse_expr() uses parse_term()
 # TODO: parse_expr_wrapper() wraps parse_expr()
 # TODO: parse() uses parser_expr_wrapper() instead of parse_expr()
 # TODO: print(2+3*4) => 14
@@ -137,6 +134,16 @@ class TestParseExpr(unittest.TestCase):
                 "expected": BinOpNode(
                                 BinOpNode(
                                     BinOpNode(2, "+", 3), "+", 5), "+", 7),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("MULTIPLY", "*"),
+                    Token("NUMBER", "5"),
+                 ],
+                "expected": BinOpNode(2, "+", BinOpNode(3, "*", 5))
             },
         ]
         for spec in specs:
