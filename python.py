@@ -27,6 +27,10 @@ def tokenize(code):
             tokens.append(("RPAREN", c))
             i += 1
 
+        elif c == "+":
+            tokens.append(("PLUS", c))
+            i += 1
+
         elif c.isdigit():
             start = i
             while i < len(code) and code[i].isdigit():
@@ -43,12 +47,36 @@ def tokenize(code):
 def parse(tokens):
     if tokens == [("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")]:
         return PrintNode()
-    elif (len(tokens) == 4 and
-          [type_ for type_, _ in tokens] == ["PRINT", "LPAREN", "NUMBER",
-                                             "RPAREN"]):
-        return PrintNode(int(tokens[2][1]))
+    elif (tokens[0][0] == "PRINT" and
+          tokens[1][0] == "LPAREN" and
+          tokens[-1][0] == "RPAREN"):
+        inner_tokens = tokens[2:-1]
+        expr = parse_expr(inner_tokens)
+        return PrintNode(expr)
     else:
         raise SyntaxError("Failed to parse")
+
+
+def parse_atom(token):
+    type_, value = token
+    if type_ == "NUMBER":
+        return int(value)
+    else:
+        raise SyntaxError("Expected a number")
+
+
+def parse_expr(tokens):
+    if (len(tokens) == 1) and (tokens[0][0] == "NUMBER"):
+        return parse_atom(tokens[0])
+    elif (len(tokens) == 3 and
+          tokens[0][0] == "NUMBER" and
+          tokens[1][0] == "PLUS" and
+          tokens[2][0] == "NUMBER"):
+        left = parse_atom(tokens[0])
+        right = parse_atom(tokens[2])
+        return BinOpNode(left, "+", right)
+    else:
+        raise SyntaxError("Unsupported expression")
 
 
 def evaluate(node, fout):
@@ -56,9 +84,24 @@ def evaluate(node, fout):
         if node.value is None:
             print(file=fout)
         else:
-            print(node.value, file=fout)
+            result = evaluate_expr(node.value)
+            print(result, file=fout)
     else:
         raise TypeError("Unknown node type")
+
+
+def evaluate_expr(expr):
+    if isinstance(expr, int):
+        return expr
+    elif isinstance(expr, BinOpNode):
+        left = evaluate_expr(expr.left)
+        right = evaluate_expr(expr.right)
+        if expr.op == "+":
+            return left + right
+        else:
+            raise ValueError(f"Unknown operator: {expr.op}")
+    else:
+        raise TypeError("Unsupported expression node")
 
 
 class PrintNode:
@@ -70,3 +113,21 @@ class PrintNode:
 
     def __repr__(self):
         return f"PrintNode({self.value})"
+
+
+class BinOpNode:
+    def __init__(self, left, op, right):
+        self.left = left
+        self.op = op
+        self.right = right
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, BinOpNode) and
+            self.left == other.left and
+            self.op == other.op and
+            self.right == other.right
+        )
+
+    def __repr__(self):
+        return f"BinOpNode({self.left}, {self.op}, {self.right})"
