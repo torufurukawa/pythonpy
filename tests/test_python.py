@@ -7,7 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: tokenize() : "c" -> ("MINUS", "-")
 # TODO: parse_expr() checks "MINUS" token
 # TODO: evaluate_expr() handles "-" op
 # TODO: "print(2+3-5)" => 0
@@ -35,6 +34,10 @@ class TestTokenize(unittest.TestCase):
             {
                 "code": "+",
                 "expected": [Token("PLUS", "+")],
+            },
+            {
+                "code": "-",
+                "expected": [Token("MINUS", "-")],
             },
         ]
 
