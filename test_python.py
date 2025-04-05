@@ -57,6 +57,8 @@ class TestParseAtom(unittest.TestCase):
             parse_atom(token)
 
 
+# TODO: empty expression raises error
+# TODO: invalid exprssion raises error
 class TestParseExpr(unittest.TestCase):
     def test(self):
         specs = [
@@ -68,6 +70,16 @@ class TestParseExpr(unittest.TestCase):
                     Token("NUMBER", "3"),
                 ],
                 "expected": BinOpNode(2, "+", 3),
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "5"),
+                ],
+                "expected": BinOpNode(BinOpNode(2, "+", 3), "+", 5),
             },
         ]
         for spec in specs:
@@ -210,6 +222,7 @@ class TestPrintNode(unittest.TestCase):
         self.assertEqual(node.value, val)
 
 
+# TODO: print(2+3+5)
 class TestPython(unittest.TestCase):
     def test(self):
         specs = [
