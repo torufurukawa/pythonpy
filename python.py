@@ -51,12 +51,17 @@ def tokenize(code):
 
 
 def parse(tokens):
-    if tokens == [Token("PRINT", "print"), Token("LPAREN", "("), Token("RPAREN", ")")]:
+    if (
+        len(tokens) == 3
+        and tokens[0].type == "PRINT"
+        and tokens[1].type == "LPAREN"
+        and tokens[2].type == "RPAREN"
+    ):
         return PrintNode()
     elif (
-        tokens[0][0] == "PRINT"
-        and tokens[1][0] == "LPAREN"
-        and tokens[-1][0] == "RPAREN"
+        tokens[0].type == "PRINT"
+        and tokens[1].type == "LPAREN"
+        and tokens[-1].type == "RPAREN"
     ):
         inner_tokens = tokens[2:-1]
         expr = parse_expr(inner_tokens)
@@ -66,21 +71,20 @@ def parse(tokens):
 
 
 def parse_atom(token):
-    type_, value = token
-    if type_ == "NUMBER":
-        return int(value)
+    if token.type == "NUMBER":
+        return int(token.value)
     else:
         raise SyntaxError("Expected a number")
 
 
 def parse_expr(tokens):
-    if (len(tokens) == 1) and (tokens[0][0] == "NUMBER"):
+    if (len(tokens) == 1) and (tokens[0].type == "NUMBER"):
         return parse_atom(tokens[0])
     elif (
         len(tokens) == 3
-        and tokens[0][0] == "NUMBER"
-        and tokens[1][0] == "PLUS"
-        and tokens[2][0] == "NUMBER"
+        and tokens[0].type == "NUMBER"
+        and tokens[1].type == "PLUS"
+        and tokens[2].type == "NUMBER"
     ):
         left = parse_atom(tokens[0])
         right = parse_atom(tokens[2])

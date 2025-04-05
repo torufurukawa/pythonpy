@@ -237,7 +237,6 @@ class TestToken(unittest.TestCase):
         self.assertEqual(token.value, value)
 
 
-# Doing: .type_, .value interface
 # TODO: Token as dataclass
 
 
