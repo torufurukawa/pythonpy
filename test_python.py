@@ -79,6 +79,20 @@ class TestParseExpr(unittest.TestCase):
                 ],
                 "expected": BinOpNode(BinOpNode(2, "+", 3), "+", 5),
             },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "5"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "7"),
+                ],
+                "expected": BinOpNode(
+                                BinOpNode(
+                                    BinOpNode(2, "+", 3), "+", 5), "+", 7),
+            },
         ]
         for spec in specs:
             with self.subTest(spec=spec):
