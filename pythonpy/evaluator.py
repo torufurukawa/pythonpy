@@ -27,7 +27,7 @@ def evaluate_expr(expr):
         elif expr.op == "/":
             if right == 0:
                 raise ValueError("Division by zero")
-            return left / right
+            return left // right
         else:
             raise ValueError(f"Unknown operator: {expr.op}")
     else:
