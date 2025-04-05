@@ -1,8 +1,14 @@
+from collections import namedtuple
+
+
 def main(fin, fout):
     code = fin.getvalue()
     tokens = tokenize(code)
     ast = parse(tokens)
     evaluate(ast, fout)
+
+
+Token = namedtuple("Token", ["type", "value"])
 
 
 def tokenize(code):

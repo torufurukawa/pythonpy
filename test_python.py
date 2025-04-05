@@ -1,5 +1,6 @@
 import unittest
 import io
+from python import Token
 from python import tokenize
 from python import parse, parse_atom, parse_expr
 from python import evaluate, evaluate_expr
@@ -211,7 +212,20 @@ class TestPython(unittest.TestCase):
                 self.assertEqual(fout.getvalue(), spec['expected'])
 
 
-# TODO: define Token data structure?
+class TestToken(unittest.TestCase):
+    def test(self):
+        type_ = "NUMBER"
+        value = 3
+        token = Token(type_, value)
+        self.assertEqual(token[0], type_)
+        self.assertEqual(token[1], value)
+        self.assertEqual(token.type, type_)
+        self.assertEqual(token.value, value)
+
+
+# TODO: use Token
+# TODO: .type_, .value interface
+# TODO: Token as dataclass
 
 
 if __name__ == "__main__":
