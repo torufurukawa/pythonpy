@@ -18,7 +18,7 @@ def tokenize(code):
     while i < len(code):
         c = code[i]
 
-        if c in ' \t\n':
+        if c in " \t\n":
             i += 1
 
         elif code[i:].startswith("print", i):
@@ -51,11 +51,13 @@ def tokenize(code):
 
 
 def parse(tokens):
-    if tokens == [("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")]:
+    if tokens == [Token("PRINT", "print"), Token("LPAREN", "("), Token("RPAREN", ")")]:
         return PrintNode()
-    elif (tokens[0][0] == "PRINT" and
-          tokens[1][0] == "LPAREN" and
-          tokens[-1][0] == "RPAREN"):
+    elif (
+        tokens[0][0] == "PRINT"
+        and tokens[1][0] == "LPAREN"
+        and tokens[-1][0] == "RPAREN"
+    ):
         inner_tokens = tokens[2:-1]
         expr = parse_expr(inner_tokens)
         return PrintNode(expr)
@@ -74,10 +76,12 @@ def parse_atom(token):
 def parse_expr(tokens):
     if (len(tokens) == 1) and (tokens[0][0] == "NUMBER"):
         return parse_atom(tokens[0])
-    elif (len(tokens) == 3 and
-          tokens[0][0] == "NUMBER" and
-          tokens[1][0] == "PLUS" and
-          tokens[2][0] == "NUMBER"):
+    elif (
+        len(tokens) == 3
+        and tokens[0][0] == "NUMBER"
+        and tokens[1][0] == "PLUS"
+        and tokens[2][0] == "NUMBER"
+    ):
         left = parse_atom(tokens[0])
         right = parse_atom(tokens[2])
         return BinOpNode(left, "+", right)
@@ -129,10 +133,10 @@ class BinOpNode:
 
     def __eq__(self, other):
         return (
-            isinstance(other, BinOpNode) and
-            self.left == other.left and
-            self.op == other.op and
-            self.right == other.right
+            isinstance(other, BinOpNode)
+            and self.left == other.left
+            and self.op == other.op
+            and self.right == other.right
         )
 
     def __repr__(self):
