@@ -22,19 +22,19 @@ def tokenize(code):
             i += 1
 
         elif code[i:].startswith("print", i):
-            tokens.append(("PRINT", "print"))
+            tokens.append(Token("PRINT", "print"))
             i += 5
 
         elif c == "(":
-            tokens.append(("LPAREN", c))
+            tokens.append(Token("LPAREN", c))
             i += 1
 
         elif c == ")":
-            tokens.append(("RPAREN", c))
+            tokens.append(Token("RPAREN", c))
             i += 1
 
         elif c == "+":
-            tokens.append(("PLUS", c))
+            tokens.append(Token("PLUS", c))
             i += 1
 
         elif c.isdigit():
@@ -42,7 +42,7 @@ def tokenize(code):
             while i < len(code) and code[i].isdigit():
                 i += 1
             number = code[start:i]
-            tokens.append(("NUMBER", number))
+            tokens.append(Token("NUMBER", number))
 
         else:
             raise SyntaxError(f"Unexpected character: '{c}' at position {i}")

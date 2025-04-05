@@ -14,26 +14,30 @@ class TestTokenize(unittest.TestCase):
             {
                 "code": "print()",
                 "expected": [
-                    ("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("RPAREN", ")"),
                 ],
             },
             {
                 "code": "print(123)",
                 "expected": [
-                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"),
-                    ("RPAREN", ")")
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "123"),
+                    Token("RPAREN", ")"),
                 ],
             },
             {
                 "code": "+",
-                "expected": [("PLUS", "+")],
-            }
+                "expected": [Token("PLUS", "+")],
+            },
         ]
 
         for spec in specs:
             with self.subTest(spec=spec):
-                tokens = tokenize(spec['code'])
-                self.assertEqual(tokens, spec['expected'])
+                tokens = tokenize(spec["code"])
+                self.assertEqual(tokens, spec["expected"])
 
     def test_syntax_erros(self):
         with self.assertRaises(SyntaxError):
@@ -43,12 +47,12 @@ class TestTokenize(unittest.TestCase):
 class TestParseAtom(unittest.TestCase):
     def test(self):
         for val in [42, 3]:
-            token = ("NUMBER", str(val))
+            token = Token("NUMBER", str(val))
             result = parse_atom(token)
             self.assertEqual(result, val)
 
     def test_error(self):
-        token = ("LPAREN", ")")
+        token = Token("LPAREN", ")")
         with self.assertRaises(SyntaxError):
             parse_atom(token)
 
@@ -56,23 +60,27 @@ class TestParseAtom(unittest.TestCase):
 class TestParseExpr(unittest.TestCase):
     def test(self):
         specs = [
-            {"tokens": [("NUMBER", "42")], "expected": 42},
+            {"tokens": [Token("NUMBER", "42")], "expected": 42},
             {
-                "tokens": [("NUMBER", "2"), ("PLUS", "+"), ("NUMBER", "3")],
-                "expected": BinOpNode(2, "+", 3)
-            }
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                ],
+                "expected": BinOpNode(2, "+", 3),
+            },
         ]
         for spec in specs:
             with self.subTest(spec=spec):
-                result = parse_expr(spec['tokens'])
-                self.assertEqual(result, spec['expected'])
+                result = parse_expr(spec["tokens"])
+                self.assertEqual(result, spec["expected"])
 
     def test_exceptions(self):
-        specs = [{"tokens": [("NUMBER", "2"), ("PLUS", "+")]}]
+        specs = [{"tokens": [Token("NUMBER", "2"), Token("PLUS", "+")]}]
         for spec in specs:
             with self.subTest(sepc=spec):
                 with self.assertRaises(SyntaxError):
-                    parse_expr(spec['tokens'])
+                    parse_expr(spec["tokens"])
 
 
 class TestParse(unittest.TestCase):
@@ -80,51 +88,57 @@ class TestParse(unittest.TestCase):
         specs = [
             {
                 "tokens": [
-                    ("PRINT", "print"), ("LPAREN", "("), ("RPAREN", ")")
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("RPAREN", ")"),
                 ],
-                "expected": PrintNode()
+                "expected": PrintNode(),
             },
             {
                 "tokens": [
-                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "123"),
-                    ("RPAREN", ")")
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "123"),
+                    Token("RPAREN", ")"),
                 ],
-                "expected": PrintNode(123)
+                "expected": PrintNode(123),
             },
             {
                 "tokens": [
-                    ("PRINT", "print"), ("LPAREN", "("), ("NUMBER", "2"),
-                    ("PLUS", "+"), ("NUMBER", "3"), ("RPAREN", ")")
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("RPAREN", ")"),
                 ],
-                "expected": PrintNode(BinOpNode(2, "+", 3))
-            }
+                "expected": PrintNode(BinOpNode(2, "+", 3)),
+            },
         ]
 
         for spec in specs:
             with self.subTest(spec=spec):
-                ast = parse(spec['tokens'])
-                self.assertEqual(ast, spec['expected'])
+                ast = parse(spec["tokens"])
+                self.assertEqual(ast, spec["expected"])
 
     def test_errors(self):
-        specs = [
-            {"tokens": [("PRINT", "print"), ("LPAREN", "(")]}
-        ]
+        specs = [{"tokens": [Token("PRINT", "print"), Token("LPAREN", "(")]}]
         for spec in specs:
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
-                    parse(spec['tokens'])
+                    parse(spec["tokens"])
 
 
 class TestEvaluatExpr(unittest.TestCase):
     def test(self):
         specs = [
             {"expr": 2, "expected": 2},
-            {"expr": BinOpNode(2, "+", 3), "expected": 5}
+            {"expr": BinOpNode(2, "+", 3), "expected": 5},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
-                result = evaluate_expr(spec['expr'])
-                self.assertEqual(result, spec['expected'])
+                result = evaluate_expr(spec["expr"])
+                self.assertEqual(result, spec["expected"])
 
     def test_exceptions(self):
         specs = [
@@ -133,8 +147,8 @@ class TestEvaluatExpr(unittest.TestCase):
         ]
         for spec in specs:
             with self.subTest(spec=spec):
-                with self.assertRaises(spec['exception']):
-                    evaluate_expr(spec['expr'])
+                with self.assertRaises(spec["exception"]):
+                    evaluate_expr(spec["expr"])
 
 
 class TestEvaluate(unittest.TestCase):
@@ -201,15 +215,15 @@ class TestPython(unittest.TestCase):
         specs = [
             {"code": "print()", "expected": "\n"},
             {"code": "print(123)", "expected": "123\n"},
-            {"code": "print(2+3)", "expected": "5\n"}
+            {"code": "print(2+3)", "expected": "5\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
-                fin = io.StringIO(spec['code'])
+                fin = io.StringIO(spec["code"])
                 fout = io.StringIO()
                 main(fin, fout)
 
-                self.assertEqual(fout.getvalue(), spec['expected'])
+                self.assertEqual(fout.getvalue(), spec["expected"])
 
 
 class TestToken(unittest.TestCase):
@@ -223,7 +237,6 @@ class TestToken(unittest.TestCase):
         self.assertEqual(token.value, value)
 
 
-# TODO: use Token
 # TODO: .type_, .value interface
 # TODO: Token as dataclass
 
