@@ -81,6 +81,8 @@ def parse_atom(token):
 
 
 def parse_expr(tokens):
+    if not tokens:
+        raise SyntaxError("Empty expression")
 
     left = parse_atom(tokens[0])
     i = 1
@@ -95,7 +97,7 @@ def parse_expr(tokens):
             left = BinOpNode(left, op, right)
             i += 2
         else:
-            pass
+            raise SyntaxError(f"Unexpected token: {tokens[i]}")
 
     return left
 

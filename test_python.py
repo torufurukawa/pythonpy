@@ -57,8 +57,6 @@ class TestParseAtom(unittest.TestCase):
             parse_atom(token)
 
 
-# TODO: empty expression raises error
-# TODO: invalid exprssion raises error
 class TestParseExpr(unittest.TestCase):
     def test(self):
         specs = [
@@ -87,8 +85,12 @@ class TestParseExpr(unittest.TestCase):
                 result = parse_expr(spec["tokens"])
                 self.assertEqual(result, spec["expected"])
 
-    def test_exceptions(self):
-        specs = [{"tokens": [Token("NUMBER", "2"), Token("PLUS", "+")]}]
+    def test_syntax_error(self):
+        specs = [
+            {"tokens": [Token("NUMBER", "2"), Token("PLUS", "+")]},
+            {"tokens": [Token("NUMBER", "2"), Token("ERROR", "~")]},
+            {"tokens": []},
+        ]
         for spec in specs:
             with self.subTest(sepc=spec):
                 with self.assertRaises(SyntaxError):
