@@ -32,4 +32,3 @@ def evaluate_expr(expr):
             raise ValueError(f"Unknown operator: {expr.op}")
     else:
         raise TypeError("Unsupported expression node")
-

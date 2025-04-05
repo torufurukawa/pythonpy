@@ -1,7 +1,8 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize
-from pythonpy.parser import parse, parse_atom, parse_expr
+from pythonpy.parser import parse
+from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
@@ -130,6 +131,16 @@ class TestParseExpr(unittest.TestCase):
                                 BinOpNode(
                                     BinOpNode(2, "+", 3), "+", 5), "+", 7),
             },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("MULTIPLY", "*"),
+                    Token("NUMBER", "5"),
+                 ],
+                "expected": BinOpNode(2, "+", BinOpNode(3, "*", 5))
+            },
         ]
         for spec in specs:
             with self.subTest(spec=spec):
@@ -192,6 +203,70 @@ class TestParse(unittest.TestCase):
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
                     parse(spec["tokens"])
+
+
+class TestParseFactor(unittest.TestCase):
+    def test(self):
+        left = 1
+        right = 2
+        tokens = [
+            Token("NUMBER", left), Token("PLUS", "+"), Token("NUMBER", right)
+        ]
+
+        value, i = parse_factor(tokens, 0)
+        self.assertEqual(value, left)
+        self.assertEqual(i, 1)
+
+        value, i = parse_factor(tokens, 2)
+        self.assertEqual(value, right)
+        self.assertEqual(i, 3)
+
+    def test_syntax_error(self):
+        tokens = [Token("NUMBER", 1), Token("PLUS", "+")]
+        specs = [{"index": 1}, {"index": 2}]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                with self.assertRaises(SyntaxError):
+                    parse_factor(tokens, spec['index'])
+
+
+class TestParseTerm(unittest.TestCase):
+    def test(self):
+        specs = [
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3")
+                 ],
+                "index": 0,
+                "expected": (2, 1)
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("MULTIPLY", "*"),
+                    Token("NUMBER", "3")
+                 ],
+                "index": 0,
+                "expected": (BinOpNode(2, "*", 3), 3)
+            },
+            {
+                "tokens": [
+                    Token("NUMBER", "2"),
+                    Token("DIVIDE", "/"),
+                    Token("NUMBER", "3")
+                 ],
+                "index": 0,
+                "expected": (BinOpNode(2, "/", 3), 3)
+            },
+        ]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                node, i = parse_term(spec['tokens'], spec['index'])
+                self.assertEqual((node, i), spec['expected'])
 
 
 class TestEvaluatExpr(unittest.TestCase):
@@ -289,7 +364,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(2+3-5)", "expected": "0\n"},
             {"code": "print(3*4)", "expected": "12\n"},
             {"code": "print(6/2)", "expected": "3\n"},
-            {"code": "print(2*3/3+1-1)", "expected": "2\n"},
+            {"code": "print(2+3*4)", "expected": "14\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
