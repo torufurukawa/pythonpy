@@ -7,7 +7,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: evaluate_expr raises ValueError(division by zero)
 # TODO: print(3*4) => 12
 # TODO: print(6/2) => 3
 # TODO: print(2*3/3+1-1) => 2
@@ -217,6 +216,7 @@ class TestEvaluatExpr(unittest.TestCase):
         specs = [
             {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
             {"expr": None, "exception": TypeError},
+            {"expr": BinOpNode(2, "/", 0), "exception": ValueError},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
