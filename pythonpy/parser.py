@@ -1,6 +1,10 @@
 from .nodes import PrintNode, BinOpNode
 
 
+def parse_statement(tokens):
+    return parse(tokens)
+
+
 def parse(tokens):
     if (
         len(tokens) == 3

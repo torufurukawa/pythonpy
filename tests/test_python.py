@@ -1,7 +1,7 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize_program, tokenize_line
-from pythonpy.parser import parse
+from pythonpy.parser import parse_statement, parse
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode
@@ -11,13 +11,12 @@ from pythonpy.main import main
 # STEPS
 # [x] tokenize_line()（既存の tokenize() を分離）
 # [x] tokenize_program() を実装して List[List[Token]] を返す
-# [ ] ProgramNode を導入
+# [x] ProgramNode を導入
 # [ ] parse_program() => ProgramNode
-# [ ] parse_statement() を実装（まずは print() のみ）
+# [x] parse_statement() を実装（まずは print() のみ）
 # [ ] evaluate() に ProgramNode 対応を追加
 # [ ] テストを書く（複数文に対応）
 
-# TODO: parse_statement(tokens)	1文を AST（PrintNode など）に変換。今は print() のみ対応
 # TODO: parse_program(token_lines)	複数文を順に parse_statement() に渡し、ProgramNode を返す
 # TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
 
@@ -200,6 +199,28 @@ class TestParseExpr(unittest.TestCase):
             with self.subTest(sepc=spec):
                 with self.assertRaises(SyntaxError):
                     parse_expr(spec["tokens"], 0)
+
+
+class TestParseStatement(unittest.TestCase):
+    def test(self):
+        specs = [
+            {
+                "tokens": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("RPAREN", ")"),
+                ],
+                "expected": PrintNode(BinOpNode(2, "+", 3)),
+            },
+        ]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                ast = parse_statement(spec["tokens"])
+                self.assertEqual(ast, spec["expected"])
 
 
 class TestParse(unittest.TestCase):
