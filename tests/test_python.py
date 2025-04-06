@@ -8,6 +8,10 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
+# TODO: parse_factor() raises error if RPAREN not appears after LPAREN
+# TODO: parse_factor() handles cascaded parephases
+# TODO: print((1+2)*3) => 9
+
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -144,7 +148,7 @@ class TestParseExpr(unittest.TestCase):
         ]
         for spec in specs:
             with self.subTest(spec=spec):
-                result = parse_expr(spec["tokens"])
+                result, i = parse_expr(spec["tokens"], 0)
                 self.assertEqual(result, spec["expected"])
 
     def test_syntax_error(self):
@@ -156,7 +160,7 @@ class TestParseExpr(unittest.TestCase):
         for spec in specs:
             with self.subTest(sepc=spec):
                 with self.assertRaises(SyntaxError):
-                    parse_expr(spec["tokens"])
+                    parse_expr(spec["tokens"], 0)
 
 
 class TestParse(unittest.TestCase):
@@ -206,7 +210,7 @@ class TestParse(unittest.TestCase):
 
 
 class TestParseFactor(unittest.TestCase):
-    def test(self):
+    def test_simple_factor(self):
         left = 1
         right = 2
         tokens = [
@@ -220,6 +224,22 @@ class TestParseFactor(unittest.TestCase):
         value, i = parse_factor(tokens, 2)
         self.assertEqual(value, right)
         self.assertEqual(i, 3)
+
+    # TODO: parse_factor() handles LPAREN and RPAREN
+    # def test_pharen(self):
+    #     tokens = [
+    #         Token("LPAREN", "("),
+    #         Token("NUMBER", 1),
+    #         Token("PLUS", "+"),
+    #         Token("NUMBER", 2),
+    #         Token("RPAREN", ")"),
+    #         Token("MULTIPLY", "*"),
+    #         Token("NUMBER", 3),
+    #     ]
+    #     value, i = parse_factor(tokens, 0)
+
+    #     self.assertEqual(value, 3)
+    #     self.assertEqual(i, 5)
 
     def test_syntax_error(self):
         tokens = [Token("NUMBER", 1), Token("PLUS", "+")]

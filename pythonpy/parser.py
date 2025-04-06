@@ -15,7 +15,7 @@ def parse(tokens):
         and tokens[-1].type == "RPAREN"
     ):
         inner_tokens = tokens[2:-1]
-        expr = parse_expr(inner_tokens)
+        expr = parse_expr_wrapper(inner_tokens)
         return PrintNode(expr)
     else:
         raise SyntaxError("Failed to parse")
@@ -28,11 +28,16 @@ def parse_atom(token):
         raise SyntaxError("Expected a number")
 
 
-def parse_expr(tokens):
+def parse_expr_wrapper(tokens):
+    node, i = parse_expr(tokens, 0)
+    return node
+
+
+def parse_expr(tokens, index):
     if not tokens:
         raise SyntaxError("Empty expression")
 
-    node, i = parse_term(tokens, 0)
+    node, i = parse_term(tokens, index)
     while i < len(tokens):
         if tokens[i].type not in ("PLUS", "MINUS"):
             raise SyntaxError(f"Unexpected token: {tokens[i]}")
@@ -41,18 +46,25 @@ def parse_expr(tokens):
         right, i = parse_term(tokens, i+1)
         node = BinOpNode(node, op, right)
 
-    return node
+    return node, i
 
 
 def parse_factor(tokens, i):
     if len(tokens) <= i:
-        raise SyntaxError("Expected number")
+        raise SyntaxError("Expected number or '('")
 
     token = tokens[i]
-    if token.type != "NUMBER":
-        raise SyntaxError(f"Unexpected token in factor: {token}")
 
-    return int(token.value), i+1
+    if token.type == "NUMBER":
+        return int(token.value), i+1
+
+    # elif token.type == "LPAREN":
+    #     expr, next_i = parse_expr(tokens, i+1)
+    #     if len(tokens) <= next_i or tokens[next_i].type != "RPAREN":
+    #         raise SyntaxError("Expected ')'")
+    #     return expr, next_i + 1
+
+    raise SyntaxError(f"Unexpected token in factor: {token}")
 
 
 def parse_term(tokens, i):
