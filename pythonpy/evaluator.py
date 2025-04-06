@@ -1,8 +1,12 @@
-from .nodes import PrintNode, BinOpNode
+from .nodes import ProgramNode, PrintNode, BinOpNode
 
 
 def evaluate(node, fout):
-    if isinstance(node, PrintNode):
+    if isinstance(node, ProgramNode):
+        for statement in node.statements:
+            evaluate(statement, fout)
+
+    elif isinstance(node, PrintNode):
         if node.value is None:
             print(file=fout)
         else:

@@ -14,10 +14,9 @@ from pythonpy.main import main
 # [x] ProgramNode を導入
 # [x] parse_program() => ProgramNode
 # [x] parse_statement() を実装（まずは print() のみ）
-# [ ] evaluate() に ProgramNode 対応を追加
-# [ ] テストを書く（複数文に対応）
+# [x] evaluate() に ProgramNode 対応を追加
+# [ ] main() を更新して複数文に対応
 
-# TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
 
 # TODO: main処理 : print() print(1+2)
 # code = fin.getvalue()
@@ -459,6 +458,12 @@ class TestEvaluate(unittest.TestCase):
         fout = io.StringIO()
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "5\n")
+
+    def test_program(self):
+        node = ProgramNode([PrintNode(), PrintNode(BinOpNode(1, "+", 2))])
+        fout = io.StringIO()
+        evaluate(node, fout)
+        self.assertEqual(fout.getvalue(), "\n3\n")
 
 
 class TestProgramNode(unittest.TestCase):
