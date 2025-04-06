@@ -7,17 +7,17 @@ class Token:
     value: str
 
 
-def tokenize_line(code):
+def tokenize_line(line):
     tokens = []
     i = 0
 
-    while i < len(code):
-        c = code[i]
+    while i < len(line):
+        c = line[i]
 
         if c in " \t\n":
             i += 1
 
-        elif code[i:].startswith("print", i):
+        elif line[i:].startswith("print", i):
             tokens.append(Token("PRINT", "print"))
             i += 5
 
@@ -47,9 +47,9 @@ def tokenize_line(code):
 
         elif c.isdigit():
             start = i
-            while i < len(code) and code[i].isdigit():
+            while i < len(line) and line[i].isdigit():
                 i += 1
-            number = code[start:i]
+            number = line[start:i]
             tokens.append(Token("NUMBER", number))
 
         else:

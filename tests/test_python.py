@@ -16,7 +16,6 @@ from pythonpy.main import main
 # TODO: evaluate() に ProgramNode 対応を追加
 # TODO: テストを書く（複数文に対応）
 
-# TODO: tokenize_program()	複数行の文字列を、各行ごとのトークン列に分割（文リスト）
 # TODO: parse_statement(tokens)	1文を AST（PrintNode など）に変換。今は print() のみ対応
 # TODO: parse_program(token_lines)	複数文を順に parse_statement() に渡し、ProgramNode を返す
 # TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
@@ -29,11 +28,17 @@ from pythonpy.main import main
 # evaluate(program_node, fout)                 # 文を順に実行
 
 
-class TestTokenize(unittest.TestCase):
+# DOING: tokenize_program() を実装して List[List[Token]] を返す
+# TODO: tokenize_program()	複数行の文字列を、各行ごとのトークン列に分割（文リスト）
+class TestTokenizeProgram(unittest.TestCase):
+    pass
+
+
+class TestTokenizeLine(unittest.TestCase):
     def test(self):
         specs = [
             {
-                "code": "print()",
+                "line": "print()",
                 "expected": [
                     Token("PRINT", "print"),
                     Token("LPAREN", "("),
@@ -41,7 +46,7 @@ class TestTokenize(unittest.TestCase):
                 ],
             },
             {
-                "code": "print(123)",
+                "line": "print(123)",
                 "expected": [
                     Token("PRINT", "print"),
                     Token("LPAREN", "("),
@@ -50,26 +55,26 @@ class TestTokenize(unittest.TestCase):
                 ],
             },
             {
-                "code": "+",
+                "line": "+",
                 "expected": [Token("PLUS", "+")],
             },
             {
-                "code": "-",
+                "line": "-",
                 "expected": [Token("MINUS", "-")],
             },
             {
-                "code": "*",
+                "line": "*",
                 "expected": [Token("MULTIPLY", "*")]
             },
             {
-                "code": "/",
+                "line": "/",
                 "expected": [Token("DIVIDE", "/")],
             },
         ]
 
         for spec in specs:
             with self.subTest(spec=spec):
-                tokens = tokenize_line(spec["code"])
+                tokens = tokenize_line(spec["line"])
                 self.assertEqual(tokens, spec["expected"])
 
     def test_syntax_erros(self):
