@@ -8,7 +8,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_factor() raises error if RPAREN not appears after LPAREN
 # TODO: parse_factor() handles cascaded parephases
 # TODO: print((1+2)*3) => 9
 
@@ -247,6 +246,16 @@ class TestParseFactor(unittest.TestCase):
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
                     parse_factor(tokens, spec['index'])
+
+    def test_incomplete_paren(self):
+        tokens = [
+            Token("LPAREN", "("),
+            Token("NUMBER", 1),
+            Token("PLUS", 1),
+            Token("NUMBER", 2)
+        ]
+        with self.assertRaises(SyntaxError):
+            parse_factor(tokens, 0)
 
 
 class TestParseTerm(unittest.TestCase):
