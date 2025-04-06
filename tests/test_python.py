@@ -4,22 +4,22 @@ from pythonpy.lexer import Token, tokenize_program, tokenize_line
 from pythonpy.parser import parse
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
-from pythonpy.nodes import PrintNode, BinOpNode
+from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode
 from pythonpy.main import main
 
 
 # STEPS
-# DONE: tokenize_line()（既存の tokenize() を分離）
-# TODO: tokenize_program() を実装して List[List[Token]] を返す
-# TODO: ProgramNode を導入し、parse_program() を実装
-# TODO: parse_statement() を実装（まずは print() のみ）
-# TODO: evaluate() に ProgramNode 対応を追加
-# TODO: テストを書く（複数文に対応）
+# [x] tokenize_line()（既存の tokenize() を分離）
+# [x] tokenize_program() を実装して List[List[Token]] を返す
+# [ ] ProgramNode を導入
+# [ ] parse_program() => ProgramNode
+# [ ] parse_statement() を実装（まずは print() のみ）
+# [ ] evaluate() に ProgramNode 対応を追加
+# [ ] テストを書く（複数文に対応）
 
 # TODO: parse_statement(tokens)	1文を AST（PrintNode など）に変換。今は print() のみ対応
 # TODO: parse_program(token_lines)	複数文を順に parse_statement() に渡し、ProgramNode を返す
 # TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
-# TODO: ProgramNode(statements) ← New
 
 # TODO: main処理 : print() print(1+2)
 # code = fin.getvalue()
@@ -412,6 +412,13 @@ class TestEvaluate(unittest.TestCase):
         fout = io.StringIO()
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "5\n")
+
+
+class TestProgramNode(unittest.TestCase):
+    def test(self):
+        statements = [PrintNode(), PrintNode(1)]
+        node = ProgramNode(statements)
+        self.assertEqual(node.statements, statements)
 
 
 class TestBinOpNode(unittest.TestCase):
