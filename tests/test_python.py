@@ -1,6 +1,6 @@
 import unittest
 import io
-from pythonpy.lexer import Token, tokenize_line
+from pythonpy.lexer import Token, tokenize_program, tokenize_line
 from pythonpy.parser import parse
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
@@ -21,17 +21,35 @@ from pythonpy.main import main
 # TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
 # TODO: ProgramNode(statements) ← New
 
-# TODO: main処理
+# TODO: main処理 : print() print(1+2)
 # code = fin.getvalue()
 # token_lines = tokenize_program(code)         # 行ごとにトークン化
 # program_node = parse_program(token_lines)    # トークン列ごとに文を構文解析
 # evaluate(program_node, fout)                 # 文を順に実行
 
 
-# DOING: tokenize_program() を実装して List[List[Token]] を返す
-# TODO: tokenize_program()	複数行の文字列を、各行ごとのトークン列に分割（文リスト）
 class TestTokenizeProgram(unittest.TestCase):
-    pass
+    def test(self):
+        code = "\n".join(["print()", "print(1+2)"])
+        token_lines = tokenize_program(code)
+        self.assertEqual(
+            token_lines,
+            [
+                [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("RPAREN", ")")
+                ],
+                [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "1"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "2"),
+                    Token("RPAREN", ")")
+                ],
+            ]
+        )
 
 
 class TestTokenizeLine(unittest.TestCase):

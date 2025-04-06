@@ -7,6 +7,11 @@ class Token:
     value: str
 
 
+def tokenize_program(code):
+    lines = code.splitlines()
+    return [tokenize_line(line) for line in lines if line.strip()]
+
+
 def tokenize_line(line):
     tokens = []
     i = 0
