@@ -8,8 +8,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: print((1+2)*3) => 9
-
 class TestTokenize(unittest.TestCase):
     def test(self):
         specs = [
@@ -413,6 +411,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(3*4)", "expected": "12\n"},
             {"code": "print(6/2)", "expected": "3\n"},
             {"code": "print(2+3*4)", "expected": "14\n"},
+            {"code": "print((1+2)*3)", "expected": "9\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
