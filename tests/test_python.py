@@ -154,7 +154,6 @@ class TestParseExpr(unittest.TestCase):
     def test_syntax_error(self):
         specs = [
             {"tokens": [Token("NUMBER", "2"), Token("PLUS", "+")]},
-            {"tokens": [Token("NUMBER", "2"), Token("ERROR", "~")]},
             {"tokens": []},
         ]
         for spec in specs:
@@ -225,7 +224,6 @@ class TestParseFactor(unittest.TestCase):
         self.assertEqual(value, right)
         self.assertEqual(i, 3)
 
-    # DOING: parse_factor() handles LPAREN and RPAREN
     def test_pharen(self):
         tokens = [
             Token("LPAREN", "("),
@@ -236,9 +234,9 @@ class TestParseFactor(unittest.TestCase):
             Token("MULTIPLY", "*"),
             Token("NUMBER", 3),
         ]
-        value, i = parse_factor(tokens, 0)
 
-        self.assertEqual(value, 3)
+        value, i = parse_factor(tokens, 0)
+        self.assertEqual(value, BinOpNode(1, "+", 2))
         self.assertEqual(i, 5)
 
     def test_syntax_error(self):

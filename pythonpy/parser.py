@@ -40,7 +40,7 @@ def parse_expr(tokens, index):
     node, i = parse_term(tokens, index)
     while i < len(tokens):
         if tokens[i].type not in ("PLUS", "MINUS"):
-            raise SyntaxError(f"Unexpected token: {tokens[i]}")
+            break
 
         op = tokens[i].value
         right, i = parse_term(tokens, i+1)
