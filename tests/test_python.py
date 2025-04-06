@@ -8,7 +8,6 @@ from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-# TODO: parse_factor() handles cascaded parephases
 # TODO: print((1+2)*3) => 9
 
 class TestTokenize(unittest.TestCase):
@@ -222,6 +221,28 @@ class TestParseFactor(unittest.TestCase):
         value, i = parse_factor(tokens, 2)
         self.assertEqual(value, right)
         self.assertEqual(i, 3)
+
+    def test_cascaded_factor(self):
+        inner_tokens = [
+            Token("LPAREN", "("),
+            Token("NUMBER", 1),
+            Token("PLUS", "+"),
+            Token("NUMBER", 2),
+            Token("RPAREN", ")")
+        ]
+        tokens = [
+            Token("LPAREN", "("),
+            *inner_tokens,
+            Token("MULTIPLY", "*"),
+            *inner_tokens,
+            Token("RPAREN", ")"),
+        ]
+
+        node, i = parse_factor(tokens, 0)
+        self.assertEqual(
+            node,
+            BinOpNode(BinOpNode(1, "+", 2), "*", BinOpNode(1, "+", 2))
+        )
 
     def test_pharen(self):
         tokens = [
