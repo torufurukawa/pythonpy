@@ -225,21 +225,21 @@ class TestParseFactor(unittest.TestCase):
         self.assertEqual(value, right)
         self.assertEqual(i, 3)
 
-    # TODO: parse_factor() handles LPAREN and RPAREN
-    # def test_pharen(self):
-    #     tokens = [
-    #         Token("LPAREN", "("),
-    #         Token("NUMBER", 1),
-    #         Token("PLUS", "+"),
-    #         Token("NUMBER", 2),
-    #         Token("RPAREN", ")"),
-    #         Token("MULTIPLY", "*"),
-    #         Token("NUMBER", 3),
-    #     ]
-    #     value, i = parse_factor(tokens, 0)
+    # DOING: parse_factor() handles LPAREN and RPAREN
+    def test_pharen(self):
+        tokens = [
+            Token("LPAREN", "("),
+            Token("NUMBER", 1),
+            Token("PLUS", "+"),
+            Token("NUMBER", 2),
+            Token("RPAREN", ")"),
+            Token("MULTIPLY", "*"),
+            Token("NUMBER", 3),
+        ]
+        value, i = parse_factor(tokens, 0)
 
-    #     self.assertEqual(value, 3)
-    #     self.assertEqual(i, 5)
+        self.assertEqual(value, 3)
+        self.assertEqual(i, 5)
 
     def test_syntax_error(self):
         tokens = [Token("NUMBER", 1), Token("PLUS", "+")]

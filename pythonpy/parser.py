@@ -58,17 +58,17 @@ def parse_factor(tokens, i):
     if token.type == "NUMBER":
         return int(token.value), i+1
 
-    # elif token.type == "LPAREN":
-    #     expr, next_i = parse_expr(tokens, i+1)
-    #     if len(tokens) <= next_i or tokens[next_i].type != "RPAREN":
-    #         raise SyntaxError("Expected ')'")
-    #     return expr, next_i + 1
+    elif token.type == "LPAREN":
+        expr, next_i = parse_expr(tokens, i+1)
+        if len(tokens) <= next_i or tokens[next_i].type != "RPAREN":
+            raise SyntaxError("Expected ')'")
+        return expr, next_i + 1
 
     raise SyntaxError(f"Unexpected token in factor: {token}")
 
 
-def parse_term(tokens, i):
-    node, i = parse_factor(tokens, i)
+def parse_term(tokens, index):
+    node, i = parse_factor(tokens, index)
 
     while i < len(tokens) and tokens[i].type in ["MULTIPLY", "DIVIDE"]:
         op = tokens[i].value
