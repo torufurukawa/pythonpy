@@ -1,7 +1,7 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize_program, tokenize_line
-from pythonpy.parser import parse_statement, parse
+from pythonpy.parser import parse_statement, parse, parse_program
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode
@@ -12,12 +12,11 @@ from pythonpy.main import main
 # [x] tokenize_line()（既存の tokenize() を分離）
 # [x] tokenize_program() を実装して List[List[Token]] を返す
 # [x] ProgramNode を導入
-# [ ] parse_program() => ProgramNode
+# [x] parse_program() => ProgramNode
 # [x] parse_statement() を実装（まずは print() のみ）
 # [ ] evaluate() に ProgramNode 対応を追加
 # [ ] テストを書く（複数文に対応）
 
-# TODO: parse_program(token_lines)	複数文を順に parse_statement() に渡し、ProgramNode を返す
 # TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
 
 # TODO: main処理 : print() print(1+2)
@@ -97,6 +96,33 @@ class TestTokenizeLine(unittest.TestCase):
     def test_syntax_erros(self):
         with self.assertRaises(SyntaxError):
             tokenize_line("log()")
+
+
+class TestParseProgram(unittest.TestCase):
+    def test(self):
+        token_lines = [
+            [
+                Token("PRINT", "print"),
+                Token("LPAREN", "("),
+                Token("RPAREN", ")")
+            ],
+            [
+                Token("PRINT", "print"),
+                Token("LPAREN", "("),
+                Token("NUMBER", "1"),
+                Token("PLUS", "+"),
+                Token("NUMBER", "2"),
+                Token("RPAREN", ")")
+            ],
+        ]
+
+        node = parse_program(token_lines)
+
+        self.assertIsInstance(node, ProgramNode)
+        self.assertEqual(
+            node.statements,
+            [PrintNode(), PrintNode(BinOpNode(1, "+", 2))]
+        )
 
 
 class TestParseAtom(unittest.TestCase):

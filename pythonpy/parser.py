@@ -1,4 +1,13 @@
-from .nodes import PrintNode, BinOpNode
+from .nodes import ProgramNode, PrintNode, BinOpNode
+
+
+def parse_program(token_lines):
+    statements = []
+    for tokens in token_lines:
+        statement = parse_statement(tokens)
+        statements.append(statement)
+
+    return ProgramNode(statements)
 
 
 def parse_statement(tokens):
