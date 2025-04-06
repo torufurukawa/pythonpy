@@ -7,7 +7,7 @@ class Token:
     value: str
 
 
-def tokenize(code):
+def tokenize_line(code):
     tokens = []
     i = 0
 
@@ -56,4 +56,3 @@ def tokenize(code):
             raise SyntaxError(f"Unexpected character: '{c}' at position {i}")
 
     return tokens
-

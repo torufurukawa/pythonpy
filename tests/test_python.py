@@ -1,11 +1,32 @@
 import unittest
 import io
-from pythonpy.lexer import Token, tokenize
+from pythonpy.lexer import Token, tokenize_line
 from pythonpy.parser import parse
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import PrintNode, BinOpNode
 from pythonpy.main import main
+
+
+# STEPS
+# DONE: tokenize_line()（既存の tokenize() を分離）
+# TODO: tokenize_program() を実装して List[List[Token]] を返す
+# TODO: ProgramNode を導入し、parse_program() を実装
+# TODO: parse_statement() を実装（まずは print() のみ）
+# TODO: evaluate() に ProgramNode 対応を追加
+# TODO: テストを書く（複数文に対応）
+
+# TODO: tokenize_program()	複数行の文字列を、各行ごとのトークン列に分割（文リスト）
+# TODO: parse_statement(tokens)	1文を AST（PrintNode など）に変換。今は print() のみ対応
+# TODO: parse_program(token_lines)	複数文を順に parse_statement() に渡し、ProgramNode を返す
+# TODO: evaluate(ProgramNode)	各文を順に evaluate() で実行する
+# TODO: ProgramNode(statements) ← New
+
+# TODO: main処理
+# code = fin.getvalue()
+# token_lines = tokenize_program(code)         # 行ごとにトークン化
+# program_node = parse_program(token_lines)    # トークン列ごとに文を構文解析
+# evaluate(program_node, fout)                 # 文を順に実行
 
 
 class TestTokenize(unittest.TestCase):
@@ -48,12 +69,12 @@ class TestTokenize(unittest.TestCase):
 
         for spec in specs:
             with self.subTest(spec=spec):
-                tokens = tokenize(spec["code"])
+                tokens = tokenize_line(spec["code"])
                 self.assertEqual(tokens, spec["expected"])
 
     def test_syntax_erros(self):
         with self.assertRaises(SyntaxError):
-            tokenize("log()")
+            tokenize_line("log()")
 
 
 class TestParseAtom(unittest.TestCase):
