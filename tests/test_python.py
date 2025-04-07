@@ -18,13 +18,6 @@ from pythonpy.main import main
 # [ ] main() を更新して複数文に対応
 
 
-# TODO: main処理 : print() print(1+2)
-# code = fin.getvalue()
-# token_lines = tokenize_program(code)         # 行ごとにトークン化
-# program_node = parse_program(token_lines)    # トークン列ごとに文を構文解析
-# evaluate(program_node, fout)                 # 文を順に実行
-
-
 class TestTokenizeProgram(unittest.TestCase):
     def test(self):
         code = "\n".join(["print()", "print(1+2)"])
@@ -459,6 +452,11 @@ class TestEvaluate(unittest.TestCase):
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "5\n")
 
+    # DOING: main処理 : print() print(1+2)
+    # code = fin.getvalue()
+    # token_lines = tokenize_program(code)         # 行ごとにトークン化
+    # program_node = parse_program(token_lines)    # トークン列ごとに文を構文解析
+    # evaluate(program_node, fout)                 # 文を順に実行
     def test_program(self):
         node = ProgramNode([PrintNode(), PrintNode(BinOpNode(1, "+", 2))])
         fout = io.StringIO()
