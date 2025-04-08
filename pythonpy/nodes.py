@@ -49,3 +49,16 @@ class AssignNode:
 
     def __expr__(self):
         return f"AssignNode({self.var_name} = {self.expr})"
+
+
+class NameNode:
+    def __init__(self, var_name):
+        self.var_name = var_name
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, NameNode) and (self.var_name == other.var_name)
+        )
+
+    def __repr__(self):
+        return f"NameNode(var_name = {self.var_name})"

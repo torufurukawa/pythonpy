@@ -4,16 +4,19 @@ from pythonpy.lexer import Token, tokenize_program, tokenize_line
 from pythonpy.parser import parse_statement, parse, parse_program
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
-from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
+from pythonpy.nodes import (
+    ProgramNode, PrintNode, BinOpNode, AssignNode, NameNode
+)
 from pythonpy.main import main
 
 
 # [x] AssignNode(var_name, expr) を定義
-# [ ] NameNode(var_name) を定義
+# [x] NameNode(var_name) を定義
 # [ ] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
 # [ ] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
 # [ ] evaluate_expr(NameNode) で env[var] を返す
 # [ ] テストで a = 1\nprint(a) を書いて通るか確認
+# [ ] parse_statement( "log()"" ) で、 syntax error
 
 class TestTokenizeProgram(unittest.TestCase):
     def test(self):
@@ -98,10 +101,6 @@ class TestTokenizeLine(unittest.TestCase):
             with self.subTest(spec=spec):
                 tokens = tokenize_line(spec["line"])
                 self.assertEqual(tokens, spec["expected"])
-
-    def test_syntax_erros(self):
-        with self.assertRaises(SyntaxError):
-            tokenize_line("log()")
 
 
 class TestParseProgram(unittest.TestCase):
@@ -253,6 +252,10 @@ class TestParseStatement(unittest.TestCase):
             with self.subTest(spec=spec):
                 ast = parse_statement(spec["tokens"])
                 self.assertEqual(ast, spec["expected"])
+
+    # def test_syntax_erros(self):
+    #     with self.assertRaises(SyntaxError):
+    #         tokenize_line("log()")
 
 
 class TestParse(unittest.TestCase):
@@ -525,6 +528,21 @@ class TestAssignNode(unittest.TestCase):
         a = AssignNode("x", 1)
         b = AssignNode("x", 1)
         self.assertEqual(a, b)
+
+
+class TestNameNode(unittest.TestCase):
+    def test(self):
+        specs = [{"name": "x"}, {"name": "a3"}]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                n = NameNode(spec['name'])
+                self.assertEqual(n.var_name, spec['name'])
+
+    def test_magic_methods(self):
+        a = NameNode("x")
+        b = NameNode("x")
+        self.assertEqual(a, b)
+        self.assertIsInstance(repr(a), str)
 
 
 class TestPython(unittest.TestCase):
