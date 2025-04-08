@@ -1,4 +1,4 @@
-from .nodes import ProgramNode, PrintNode, BinOpNode
+from .nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
 
 
 def parse_program(token_lines):
@@ -30,6 +30,13 @@ def parse(tokens):
         inner_tokens = tokens[2:-1]
         expr = parse_expr_wrapper(inner_tokens)
         return PrintNode(expr)
+    elif (
+        3 <= len(tokens) and
+        tokens[0].type == "IDENTIFIER" and
+        tokens[1].type == "EQUALS"
+    ):
+        expr = parse_expr_wrapper(tokens[2:])
+        return AssignNode(tokens[0].value, expr)
     else:
         raise SyntaxError("Failed to parse")
 

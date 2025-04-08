@@ -47,7 +47,7 @@ class AssignNode:
             self.expr == other.expr
         )
 
-    def __expr__(self):
+    def __repr__(self):
         return f"AssignNode({self.var_name} = {self.expr})"
 
 

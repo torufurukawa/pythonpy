@@ -12,11 +12,13 @@ from pythonpy.main import main
 
 # [x] AssignNode(var_name, expr) を定義
 # [x] NameNode(var_name) を定義
-# [ ] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
+# [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
+# [ ] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
 # [ ] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
 # [ ] evaluate_expr(NameNode) で env[var] を返す
 # [ ] テストで a = 1\nprint(a) を書いて通るか確認
 # [ ] parse_statement( "log()"" ) で、 syntax error
+# [ ] parse() を削除
 
 class TestTokenizeProgram(unittest.TestCase):
     def test(self):
@@ -246,6 +248,25 @@ class TestParseStatement(unittest.TestCase):
                 ],
                 "expected": PrintNode(BinOpNode(2, "+", 3)),
             },
+            {
+                "tokens": [
+                    Token("IDENTIFIER", "x"),
+                    Token("EQUALS", "="),
+                    Token("NUMBER", "2"),
+                ],
+                "expected": AssignNode("x", 2),
+            },
+            {
+                "tokens": [
+                    Token("IDENTIFIER", "x"),
+                    Token("EQUALS", "="),
+                    Token("NUMBER", "1"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "2")
+                ],
+                "expected": AssignNode("x", BinOpNode(1, "+", 2)),
+            },
+
         ]
 
         for spec in specs:
