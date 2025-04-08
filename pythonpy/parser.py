@@ -1,4 +1,4 @@
-from .nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
+from .nodes import ProgramNode, PrintNode, BinOpNode, AssignNode, NameNode
 
 
 def parse_program(token_lines):
@@ -77,6 +77,9 @@ def parse_factor(tokens, i):
 
     if token.type == "NUMBER":
         return int(token.value), i+1
+
+    elif token.type == "IDENTIFIER":
+        return NameNode(token.value), i+1
 
     elif token.type == "LPAREN":
         expr, next_i = parse_expr(tokens, i+1)

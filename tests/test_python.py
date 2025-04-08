@@ -13,11 +13,11 @@ from pythonpy.main import main
 # [x] AssignNode(var_name, expr) を定義
 # [x] NameNode(var_name) を定義
 # [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
-# [ ] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
+# [x] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
 # [ ] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
 # [ ] evaluate_expr(NameNode) で env[var] を返す
 # [ ] テストで a = 1\nprint(a) を書いて通るか確認
-# [ ] parse_statement( "log()"" ) で、 syntax error
+# [ ] parse_statement( "log()"" ) で、syntax error
 # [ ] parse() を削除
 
 class TestTokenizeProgram(unittest.TestCase):
@@ -267,6 +267,26 @@ class TestParseStatement(unittest.TestCase):
                 "expected": AssignNode("x", BinOpNode(1, "+", 2)),
             },
 
+            {
+                "tokens": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("IDENTIFIER", "x"),
+                    Token("RPAREN", ")"),
+                ],
+                "expected": PrintNode(NameNode("x")),
+            },
+            {
+                "tokens": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("IDENTIFIER", "x"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("RPAREN", ")"),
+                ],
+                "expected": PrintNode(BinOpNode(NameNode("x"), "+", 3)),
+            },
         ]
 
         for spec in specs:
