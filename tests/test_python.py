@@ -478,11 +478,10 @@ class TestEvaluatExpr(unittest.TestCase):
 
     def test_exceptions(self):
         specs = [
-            {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
-            {"expr": None, "exception": TypeError},
-            {"expr": BinOpNode(2, "/", 0), "exception": ValueError},
-
-            # TODO: x is undefined, NameNode(x) -> NameError
+            {"expr": BinOpNode(2, "~", 3), "env": {}, "exception": ValueError},
+            {"expr": None, "env": {}, "exception": TypeError},
+            {"expr": BinOpNode(2, "/", 0), "env": {}, "exception": ValueError},
+            {"expr": NameNode("x"), "env": {}, "exception": NameError},
         ]
         for spec in specs:
             with self.subTest(spec=spec):

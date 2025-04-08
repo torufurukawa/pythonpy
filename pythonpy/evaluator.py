@@ -41,6 +41,8 @@ def evaluate_expr(expr, env):
             raise ValueError(f"Unknown operator: {expr.op}")
 
     elif isinstance(expr, NameNode):
+        if expr.var_name not in env:
+            raise NameError(f"Undefined variable: {expr.var_name}")
         return env[expr.var_name]
 
     else:
