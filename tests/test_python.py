@@ -15,8 +15,8 @@ from pythonpy.main import main
 # [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
 # [x] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
 # [x] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
-# [.] evaluate_expr(NameNode) で env[var] を返す
-# [ ] テストで a = 1\nprint(a) を書いて通るか確認
+# [x] evaluate_expr(NameNode) で env[var] を返す
+# [x] テストで a = 1\nprint(a) を書いて通るか確認
 # [ ] parse_statement( "log()"" ) で、syntax error
 # [ ] parse() を削除
 
@@ -627,6 +627,7 @@ class TestPython(unittest.TestCase):
             {"code": "print((1+2)*3)", "expected": "9\n"},
             {"code": "print()\nprint(1+2)", "expected": "\n3\n"},
             {"code": "print()\n\nprint(1+2)", "expected": "\n3\n"},
+            {"code": "a=1\nprint(a+2)", "expected": "3\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
