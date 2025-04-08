@@ -15,7 +15,7 @@ from pythonpy.main import main
 # [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
 # [x] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
 # [x] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
-# [ ] evaluate_expr(NameNode) で env[var] を返す
+# [.] evaluate_expr(NameNode) で env[var] を返す
 # [ ] テストで a = 1\nprint(a) を書いて通るか確認
 # [ ] parse_statement( "log()"" ) で、syntax error
 # [ ] parse() を削除
@@ -459,16 +459,18 @@ class TestParseTerm(unittest.TestCase):
 class TestEvaluatExpr(unittest.TestCase):
     def test(self):
         specs = [
-            {"expr": 2, "expected": 2},
-            {"expr": BinOpNode(2, "+", 3), "expected": 5},
-            {"expr": BinOpNode(2, "-", 3), "expected": -1},
-            {"expr": BinOpNode(2, "*", 3), "expected": 6},
-            {"expr": BinOpNode(6, "/", 3), "expected": 2},
+            {"expr": 2, "env": {}, "expected": 2},
+            {"expr": BinOpNode(2, "+", 3), "env": {}, "expected": 5},
+            {"expr": BinOpNode(2, "-", 3), "env": {}, "expected": -1},
+            {"expr": BinOpNode(2, "*", 3), "env": {}, "expected": 6},
+            {"expr": BinOpNode(6, "/", 3), "env": {}, "expected": 2},
+            # TODO: x=1, x -> 1
+            # TODO: x=1, x + 2 -> 3
         ]
         for spec in specs:
             with self.subTest(spec=spec):
-                result = evaluate_expr(spec["expr"])
-                self.assertEqual(result, spec["expected"])
+                result = evaluate_expr(spec['expr'], spec['env'])
+                self.assertEqual(result, spec['expected'])
 
     def test_exceptions(self):
         specs = [
@@ -479,7 +481,7 @@ class TestEvaluatExpr(unittest.TestCase):
         for spec in specs:
             with self.subTest(spec=spec):
                 with self.assertRaises(spec["exception"]):
-                    evaluate_expr(spec["expr"])
+                    evaluate_expr(spec["expr"], {})
 
 
 class TestEvaluate(unittest.TestCase):
