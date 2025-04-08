@@ -464,9 +464,13 @@ class TestEvaluatExpr(unittest.TestCase):
             {"expr": BinOpNode(2, "-", 3), "env": {}, "expected": -1},
             {"expr": BinOpNode(2, "*", 3), "env": {}, "expected": 6},
             {"expr": BinOpNode(6, "/", 3), "env": {}, "expected": 2},
-            # TODO: x=1, x -> 1
-            # TODO: x=1, x + 2 -> 3
+            {"expr": NameNode("x"), "env": {"x": 1}, "expected": 1},
+            {
+                "expr": BinOpNode(NameNode("x"), "+", 2), "env": {"x": 1},
+                "expected": 3
+            },
         ]
+
         for spec in specs:
             with self.subTest(spec=spec):
                 result = evaluate_expr(spec['expr'], spec['env'])
@@ -477,6 +481,8 @@ class TestEvaluatExpr(unittest.TestCase):
             {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
             {"expr": None, "exception": TypeError},
             {"expr": BinOpNode(2, "/", 0), "exception": ValueError},
+
+            # TODO: x is undefined, NameNode(x) -> NameError
         ]
         for spec in specs:
             with self.subTest(spec=spec):

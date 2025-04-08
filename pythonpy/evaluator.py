@@ -1,4 +1,4 @@
-from .nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
+from .nodes import ProgramNode, PrintNode, BinOpNode, AssignNode, NameNode
 
 
 def evaluate(node, env, fout):
@@ -23,6 +23,7 @@ def evaluate(node, env, fout):
 def evaluate_expr(expr, env):
     if isinstance(expr, int):
         return expr
+
     elif isinstance(expr, BinOpNode):
         left = evaluate_expr(expr.left, env)
         right = evaluate_expr(expr.right, env)
@@ -38,5 +39,9 @@ def evaluate_expr(expr, env):
             return left // right
         else:
             raise ValueError(f"Unknown operator: {expr.op}")
+
+    elif isinstance(expr, NameNode):
+        return env[expr.var_name]
+
     else:
         raise TypeError("Unsupported expression node")
