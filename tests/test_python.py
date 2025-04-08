@@ -4,19 +4,16 @@ from pythonpy.lexer import Token, tokenize_program, tokenize_line
 from pythonpy.parser import parse_statement, parse, parse_program
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
-from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode
+from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
 from pythonpy.main import main
 
 
-# STEPS
-# [x] tokenize_line()（既存の tokenize() を分離）
-# [x] tokenize_program() を実装して List[List[Token]] を返す
-# [x] ProgramNode を導入
-# [x] parse_program() => ProgramNode
-# [x] parse_statement() を実装（まずは print() のみ）
-# [x] evaluate() に ProgramNode 対応を追加
-# [ ] main() を更新して複数文に対応
-
+# [.] AssignNode(var_name, expr) を定義
+# [ ] NameNode(var_name) を定義
+# [ ] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
+# [ ] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
+# [ ] evaluate_expr(NameNode) で env[var] を返す
+# [ ] テストで a = 1\nprint(a) を書いて通るか確認
 
 class TestTokenizeProgram(unittest.TestCase):
     def test(self):
@@ -494,6 +491,23 @@ class TestPrintNode(unittest.TestCase):
         val = 123
         node = PrintNode(val)
         self.assertEqual(node.value, val)
+
+
+class TestAssignNode(unittest.TestCase):
+    def test(self):
+        specs = [
+            {"var_name": "x", "expr": 1}
+        ]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                n = AssignNode(spec['var_name'], spec['expr'])
+                self.assertEqual(n.var_name, spec['var_name'])
+                self.assertEqual(n.expr, spec['expr'])
+
+    def test_eq(self):
+        a = AssignNode("x", 1)
+        b = AssignNode("x", 1)
+        self.assertEqual(a, b)
 
 
 class TestPython(unittest.TestCase):
