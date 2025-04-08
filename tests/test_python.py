@@ -14,7 +14,7 @@ from pythonpy.main import main
 # [x] NameNode(var_name) を定義
 # [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
 # [x] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
-# [ ] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
+# [.] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
 # [ ] evaluate_expr(NameNode) で env[var] を返す
 # [ ] テストで a = 1\nprint(a) を書いて通るか確認
 # [ ] parse_statement( "log()"" ) で、syntax error
@@ -485,36 +485,57 @@ class TestEvaluatExpr(unittest.TestCase):
 class TestEvaluate(unittest.TestCase):
     def test_without_args(self):
         node = PrintNode()
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "\n")
 
     def test_with_args(self):
         val = 123
         node = PrintNode(val)
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), f"{val}\n")
 
     def test_errors(self):
         nodes = [None]
         for node in nodes:
             with self.subTest(node=node):
+                env = {}
                 fout = io.StringIO()
                 with self.assertRaises(TypeError):
-                    evaluate(node, fout)
+                    evaluate(node, env, fout)
 
     def test_plus_expr(self):
         node = PrintNode(BinOpNode(2, "+", 3))
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "5\n")
 
     def test_program(self):
         node = ProgramNode([PrintNode(), PrintNode(BinOpNode(1, "+", 2))])
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "\n3\n")
+
+    # DOING: evaluate(AssignNode) で env[var] = evaluate_expr(expr)
+    def test_assign(self):
+        specs = [
+            {"var_name": "x", "expr": 3, "expected": 3}
+            # TODO: x = 2 + 3
+        ]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                node = AssignNode(spec['var_name'], spec['expr'])
+                env = {}
+                fout = io.StringIO()
+
+                evaluate(node, env, fout)
+                self.assertEqual(env[spec['var_name']], spec['expected'])
 
 
 class TestProgramNode(unittest.TestCase):

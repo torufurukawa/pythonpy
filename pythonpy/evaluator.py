@@ -1,10 +1,10 @@
 from .nodes import ProgramNode, PrintNode, BinOpNode
 
 
-def evaluate(node, fout):
+def evaluate(node, env, fout):
     if isinstance(node, ProgramNode):
         for statement in node.statements:
-            evaluate(statement, fout)
+            evaluate(statement, env, fout)
 
     elif isinstance(node, PrintNode):
         if node.value is None:
