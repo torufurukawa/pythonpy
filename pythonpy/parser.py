@@ -11,10 +11,6 @@ def parse_program(token_lines):
 
 
 def parse_statement(tokens):
-    return parse(tokens)
-
-
-def parse(tokens):
     if (
         len(tokens) == 3
         and tokens[0].type == "PRINT"

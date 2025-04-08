@@ -1,7 +1,7 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize_program, tokenize_line
-from pythonpy.parser import parse_statement, parse, parse_program
+from pythonpy.parser import parse_statement, parse_program
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
 from pythonpy.nodes import (
@@ -18,7 +18,7 @@ from pythonpy.main import main
 # [x] evaluate_expr(NameNode) で env[var] を返す
 # [x] テストで a = 1\nprint(a) を書いて通るか確認
 # [ ] parse_statement( "log()"" ) で、syntax error
-# [ ] parse() を削除
+# [x] parse() を削除
 
 class TestTokenizeProgram(unittest.TestCase):
     def test(self):
@@ -334,7 +334,7 @@ class TestParse(unittest.TestCase):
 
         for spec in specs:
             with self.subTest(spec=spec):
-                ast = parse(spec["tokens"])
+                ast = parse_statement(spec["tokens"])
                 self.assertEqual(ast, spec["expected"])
 
     def test_errors(self):
@@ -342,7 +342,7 @@ class TestParse(unittest.TestCase):
         for spec in specs:
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
-                    parse(spec["tokens"])
+                    parse_statement(spec["tokens"])
 
 
 class TestParseFactor(unittest.TestCase):
