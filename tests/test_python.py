@@ -10,16 +10,6 @@ from pythonpy.nodes import (
 from pythonpy.main import main
 
 
-# [x] AssignNode(var_name, expr) を定義
-# [x] NameNode(var_name) を定義
-# [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
-# [x] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
-# [x] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
-# [x] evaluate_expr(NameNode) で env[var] を返す
-# [x] テストで a = 1\nprint(a) を書いて通るか確認
-# [ ] parse_statement( "log()"" ) で、syntax error
-# [x] parse() を削除
-
 class TestTokenizeProgram(unittest.TestCase):
     def test(self):
         code = "\n".join(["print()", "print(1+2)"])
@@ -287,21 +277,6 @@ class TestParseStatement(unittest.TestCase):
                 ],
                 "expected": PrintNode(BinOpNode(NameNode("x"), "+", 3)),
             },
-        ]
-
-        for spec in specs:
-            with self.subTest(spec=spec):
-                ast = parse_statement(spec["tokens"])
-                self.assertEqual(ast, spec["expected"])
-
-    # def test_syntax_erros(self):
-    #     with self.assertRaises(SyntaxError):
-    #         tokenize_line("log()")
-
-
-class TestParse(unittest.TestCase):
-    def test(self):
-        specs = [
             {
                 "tokens": [
                     Token("PRINT", "print"),
