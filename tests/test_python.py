@@ -452,11 +452,6 @@ class TestEvaluate(unittest.TestCase):
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "5\n")
 
-    # DOING: main処理 : print() print(1+2)
-    # code = fin.getvalue()
-    # token_lines = tokenize_program(code)         # 行ごとにトークン化
-    # program_node = parse_program(token_lines)    # トークン列ごとに文を構文解析
-    # evaluate(program_node, fout)                 # 文を順に実行
     def test_program(self):
         node = ProgramNode([PrintNode(), PrintNode(BinOpNode(1, "+", 2))])
         fout = io.StringIO()
@@ -513,6 +508,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(6/2)", "expected": "3\n"},
             {"code": "print(2+3*4)", "expected": "14\n"},
             {"code": "print((1+2)*3)", "expected": "9\n"},
+            {"code": "print()\nprint(1+2)", "expected": "\n3\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
