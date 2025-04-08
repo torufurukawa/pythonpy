@@ -1,18 +1,52 @@
 import unittest
 import io
-from pythonpy.lexer import Token, tokenize
-from pythonpy.parser import parse
+from pythonpy.lexer import Token, tokenize_program, tokenize_line
+from pythonpy.parser import parse_statement, parse, parse_program
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
-from pythonpy.nodes import PrintNode, BinOpNode
+from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode
 from pythonpy.main import main
 
 
-class TestTokenize(unittest.TestCase):
+# STEPS
+# [x] tokenize_line()（既存の tokenize() を分離）
+# [x] tokenize_program() を実装して List[List[Token]] を返す
+# [x] ProgramNode を導入
+# [x] parse_program() => ProgramNode
+# [x] parse_statement() を実装（まずは print() のみ）
+# [x] evaluate() に ProgramNode 対応を追加
+# [ ] main() を更新して複数文に対応
+
+
+class TestTokenizeProgram(unittest.TestCase):
+    def test(self):
+        code = "\n".join(["print()", "print(1+2)"])
+        token_lines = tokenize_program(code)
+        self.assertEqual(
+            token_lines,
+            [
+                [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("RPAREN", ")")
+                ],
+                [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "1"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "2"),
+                    Token("RPAREN", ")")
+                ],
+            ]
+        )
+
+
+class TestTokenizeLine(unittest.TestCase):
     def test(self):
         specs = [
             {
-                "code": "print()",
+                "line": "print()",
                 "expected": [
                     Token("PRINT", "print"),
                     Token("LPAREN", "("),
@@ -20,7 +54,7 @@ class TestTokenize(unittest.TestCase):
                 ],
             },
             {
-                "code": "print(123)",
+                "line": "print(123)",
                 "expected": [
                     Token("PRINT", "print"),
                     Token("LPAREN", "("),
@@ -29,31 +63,58 @@ class TestTokenize(unittest.TestCase):
                 ],
             },
             {
-                "code": "+",
+                "line": "+",
                 "expected": [Token("PLUS", "+")],
             },
             {
-                "code": "-",
+                "line": "-",
                 "expected": [Token("MINUS", "-")],
             },
             {
-                "code": "*",
+                "line": "*",
                 "expected": [Token("MULTIPLY", "*")]
             },
             {
-                "code": "/",
+                "line": "/",
                 "expected": [Token("DIVIDE", "/")],
             },
         ]
 
         for spec in specs:
             with self.subTest(spec=spec):
-                tokens = tokenize(spec["code"])
+                tokens = tokenize_line(spec["line"])
                 self.assertEqual(tokens, spec["expected"])
 
     def test_syntax_erros(self):
         with self.assertRaises(SyntaxError):
-            tokenize("log()")
+            tokenize_line("log()")
+
+
+class TestParseProgram(unittest.TestCase):
+    def test(self):
+        token_lines = [
+            [
+                Token("PRINT", "print"),
+                Token("LPAREN", "("),
+                Token("RPAREN", ")")
+            ],
+            [
+                Token("PRINT", "print"),
+                Token("LPAREN", "("),
+                Token("NUMBER", "1"),
+                Token("PLUS", "+"),
+                Token("NUMBER", "2"),
+                Token("RPAREN", ")")
+            ],
+        ]
+
+        node = parse_program(token_lines)
+
+        self.assertIsInstance(node, ProgramNode)
+        self.assertEqual(
+            node.statements,
+            [PrintNode(), PrintNode(BinOpNode(1, "+", 2))]
+        )
 
 
 class TestParseAtom(unittest.TestCase):
@@ -156,6 +217,28 @@ class TestParseExpr(unittest.TestCase):
             with self.subTest(sepc=spec):
                 with self.assertRaises(SyntaxError):
                     parse_expr(spec["tokens"], 0)
+
+
+class TestParseStatement(unittest.TestCase):
+    def test(self):
+        specs = [
+            {
+                "tokens": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("NUMBER", "2"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("RPAREN", ")"),
+                ],
+                "expected": PrintNode(BinOpNode(2, "+", 3)),
+            },
+        ]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                ast = parse_statement(spec["tokens"])
+                self.assertEqual(ast, spec["expected"])
 
 
 class TestParse(unittest.TestCase):
@@ -369,6 +452,19 @@ class TestEvaluate(unittest.TestCase):
         evaluate(node, fout)
         self.assertEqual(fout.getvalue(), "5\n")
 
+    def test_program(self):
+        node = ProgramNode([PrintNode(), PrintNode(BinOpNode(1, "+", 2))])
+        fout = io.StringIO()
+        evaluate(node, fout)
+        self.assertEqual(fout.getvalue(), "\n3\n")
+
+
+class TestProgramNode(unittest.TestCase):
+    def test(self):
+        statements = [PrintNode(), PrintNode(1)]
+        node = ProgramNode(statements)
+        self.assertEqual(node.statements, statements)
+
 
 class TestBinOpNode(unittest.TestCase):
     def test_init(self):
@@ -412,6 +508,8 @@ class TestPython(unittest.TestCase):
             {"code": "print(6/2)", "expected": "3\n"},
             {"code": "print(2+3*4)", "expected": "14\n"},
             {"code": "print((1+2)*3)", "expected": "9\n"},
+            {"code": "print()\nprint(1+2)", "expected": "\n3\n"},
+            {"code": "print()\n\nprint(1+2)", "expected": "\n3\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):

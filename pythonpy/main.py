@@ -1,10 +1,10 @@
-from .lexer import tokenize
-from .parser import parse
+from .lexer import tokenize_program
+from .parser import parse_program
 from .evaluator import evaluate
 
 
 def main(fin, fout):
     code = fin.getvalue()
-    tokens = tokenize(code)
-    ast = parse(tokens)
-    evaluate(ast, fout)
+    token_lines = tokenize_program(code)
+    program_node = parse_program(token_lines)
+    evaluate(program_node, fout)

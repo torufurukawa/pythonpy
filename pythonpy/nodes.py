@@ -1,3 +1,11 @@
+class ProgramNode:
+    def __init__(self, statements):
+        self.statements = statements
+
+    def __repr__(self):
+        return f"ProgramNode({len(self.statements)} statements)"
+
+
 class PrintNode:
     def __init__(self, value=None):
         self.value = value
