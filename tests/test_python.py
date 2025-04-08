@@ -1,21 +1,13 @@
 import unittest
 import io
 from pythonpy.lexer import Token, tokenize_program, tokenize_line
-from pythonpy.parser import parse_statement, parse, parse_program
+from pythonpy.parser import parse_statement, parse_program
 from pythonpy.parser import parse_atom, parse_expr, parse_factor, parse_term
 from pythonpy.evaluator import evaluate, evaluate_expr
-from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode
+from pythonpy.nodes import (
+    ProgramNode, PrintNode, BinOpNode, AssignNode, NameNode
+)
 from pythonpy.main import main
-
-
-# STEPS
-# [x] tokenize_line()（既存の tokenize() を分離）
-# [x] tokenize_program() を実装して List[List[Token]] を返す
-# [x] ProgramNode を導入
-# [x] parse_program() => ProgramNode
-# [x] parse_statement() を実装（まずは print() のみ）
-# [x] evaluate() に ProgramNode 対応を追加
-# [ ] main() を更新して複数文に対応
 
 
 class TestTokenizeProgram(unittest.TestCase):
@@ -63,6 +55,15 @@ class TestTokenizeLine(unittest.TestCase):
                 ],
             },
             {
+                "line": "print(x)",
+                "expected": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("IDENTIFIER", "x"),
+                    Token("RPAREN", ")"),
+                ],
+            },
+            {
                 "line": "+",
                 "expected": [Token("PLUS", "+")],
             },
@@ -78,16 +79,20 @@ class TestTokenizeLine(unittest.TestCase):
                 "line": "/",
                 "expected": [Token("DIVIDE", "/")],
             },
+            {
+                "line": "p = 1",
+                "expected": [
+                    Token("IDENTIFIER", "p"),
+                    Token("EQUALS", "="),
+                    Token("NUMBER", "1")
+                ]
+            }
         ]
 
         for spec in specs:
             with self.subTest(spec=spec):
                 tokens = tokenize_line(spec["line"])
                 self.assertEqual(tokens, spec["expected"])
-
-    def test_syntax_erros(self):
-        with self.assertRaises(SyntaxError):
-            tokenize_line("log()")
 
 
 class TestParseProgram(unittest.TestCase):
@@ -233,17 +238,45 @@ class TestParseStatement(unittest.TestCase):
                 ],
                 "expected": PrintNode(BinOpNode(2, "+", 3)),
             },
-        ]
+            {
+                "tokens": [
+                    Token("IDENTIFIER", "x"),
+                    Token("EQUALS", "="),
+                    Token("NUMBER", "2"),
+                ],
+                "expected": AssignNode("x", 2),
+            },
+            {
+                "tokens": [
+                    Token("IDENTIFIER", "x"),
+                    Token("EQUALS", "="),
+                    Token("NUMBER", "1"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "2")
+                ],
+                "expected": AssignNode("x", BinOpNode(1, "+", 2)),
+            },
 
-        for spec in specs:
-            with self.subTest(spec=spec):
-                ast = parse_statement(spec["tokens"])
-                self.assertEqual(ast, spec["expected"])
-
-
-class TestParse(unittest.TestCase):
-    def test(self):
-        specs = [
+            {
+                "tokens": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("IDENTIFIER", "x"),
+                    Token("RPAREN", ")"),
+                ],
+                "expected": PrintNode(NameNode("x")),
+            },
+            {
+                "tokens": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("IDENTIFIER", "x"),
+                    Token("PLUS", "+"),
+                    Token("NUMBER", "3"),
+                    Token("RPAREN", ")"),
+                ],
+                "expected": PrintNode(BinOpNode(NameNode("x"), "+", 3)),
+            },
             {
                 "tokens": [
                     Token("PRINT", "print"),
@@ -276,7 +309,7 @@ class TestParse(unittest.TestCase):
 
         for spec in specs:
             with self.subTest(spec=spec):
-                ast = parse(spec["tokens"])
+                ast = parse_statement(spec["tokens"])
                 self.assertEqual(ast, spec["expected"])
 
     def test_errors(self):
@@ -284,7 +317,7 @@ class TestParse(unittest.TestCase):
         for spec in specs:
             with self.subTest(spec=spec):
                 with self.assertRaises(SyntaxError):
-                    parse(spec["tokens"])
+                    parse_statement(spec["tokens"])
 
 
 class TestParseFactor(unittest.TestCase):
@@ -401,62 +434,89 @@ class TestParseTerm(unittest.TestCase):
 class TestEvaluatExpr(unittest.TestCase):
     def test(self):
         specs = [
-            {"expr": 2, "expected": 2},
-            {"expr": BinOpNode(2, "+", 3), "expected": 5},
-            {"expr": BinOpNode(2, "-", 3), "expected": -1},
-            {"expr": BinOpNode(2, "*", 3), "expected": 6},
-            {"expr": BinOpNode(6, "/", 3), "expected": 2},
+            {"expr": 2, "env": {}, "expected": 2},
+            {"expr": BinOpNode(2, "+", 3), "env": {}, "expected": 5},
+            {"expr": BinOpNode(2, "-", 3), "env": {}, "expected": -1},
+            {"expr": BinOpNode(2, "*", 3), "env": {}, "expected": 6},
+            {"expr": BinOpNode(6, "/", 3), "env": {}, "expected": 2},
+            {"expr": NameNode("x"), "env": {"x": 1}, "expected": 1},
+            {
+                "expr": BinOpNode(NameNode("x"), "+", 2), "env": {"x": 1},
+                "expected": 3
+            },
         ]
+
         for spec in specs:
             with self.subTest(spec=spec):
-                result = evaluate_expr(spec["expr"])
-                self.assertEqual(result, spec["expected"])
+                result = evaluate_expr(spec['expr'], spec['env'])
+                self.assertEqual(result, spec['expected'])
 
     def test_exceptions(self):
         specs = [
-            {"expr": BinOpNode(2, "~", 3), "exception": ValueError},
-            {"expr": None, "exception": TypeError},
-            {"expr": BinOpNode(2, "/", 0), "exception": ValueError},
+            {"expr": BinOpNode(2, "~", 3), "env": {}, "exception": ValueError},
+            {"expr": None, "env": {}, "exception": TypeError},
+            {"expr": BinOpNode(2, "/", 0), "env": {}, "exception": ValueError},
+            {"expr": NameNode("x"), "env": {}, "exception": NameError},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
                 with self.assertRaises(spec["exception"]):
-                    evaluate_expr(spec["expr"])
+                    evaluate_expr(spec["expr"], {})
 
 
 class TestEvaluate(unittest.TestCase):
     def test_without_args(self):
         node = PrintNode()
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "\n")
 
     def test_with_args(self):
         val = 123
         node = PrintNode(val)
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), f"{val}\n")
 
     def test_errors(self):
         nodes = [None]
         for node in nodes:
             with self.subTest(node=node):
+                env = {}
                 fout = io.StringIO()
                 with self.assertRaises(TypeError):
-                    evaluate(node, fout)
+                    evaluate(node, env, fout)
 
     def test_plus_expr(self):
         node = PrintNode(BinOpNode(2, "+", 3))
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "5\n")
 
     def test_program(self):
         node = ProgramNode([PrintNode(), PrintNode(BinOpNode(1, "+", 2))])
+        env = {}
         fout = io.StringIO()
-        evaluate(node, fout)
+        evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "\n3\n")
+
+    def test_assign(self):
+        specs = [
+            {"var_name": "x", "expr": 3, "expected": 3},
+            {"var_name": "x", "expr": BinOpNode(1, "+", 2), "expected": 3}
+        ]
+
+        for spec in specs:
+            with self.subTest(spec=spec):
+                node = AssignNode(spec['var_name'], spec['expr'])
+                env = {}
+                fout = io.StringIO()
+
+                evaluate(node, env, fout)
+                self.assertEqual(env[spec['var_name']], spec['expected'])
 
 
 class TestProgramNode(unittest.TestCase):
@@ -496,6 +556,38 @@ class TestPrintNode(unittest.TestCase):
         self.assertEqual(node.value, val)
 
 
+class TestAssignNode(unittest.TestCase):
+    def test(self):
+        specs = [
+            {"var_name": "x", "expr": 1}
+        ]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                n = AssignNode(spec['var_name'], spec['expr'])
+                self.assertEqual(n.var_name, spec['var_name'])
+                self.assertEqual(n.expr, spec['expr'])
+
+    def test_eq(self):
+        a = AssignNode("x", 1)
+        b = AssignNode("x", 1)
+        self.assertEqual(a, b)
+
+
+class TestNameNode(unittest.TestCase):
+    def test(self):
+        specs = [{"name": "x"}, {"name": "a3"}]
+        for spec in specs:
+            with self.subTest(spec=spec):
+                n = NameNode(spec['name'])
+                self.assertEqual(n.var_name, spec['name'])
+
+    def test_magic_methods(self):
+        a = NameNode("x")
+        b = NameNode("x")
+        self.assertEqual(a, b)
+        self.assertIsInstance(repr(a), str)
+
+
 class TestPython(unittest.TestCase):
     def test(self):
         specs = [
@@ -510,6 +602,7 @@ class TestPython(unittest.TestCase):
             {"code": "print((1+2)*3)", "expected": "9\n"},
             {"code": "print()\nprint(1+2)", "expected": "\n3\n"},
             {"code": "print()\n\nprint(1+2)", "expected": "\n3\n"},
+            {"code": "a=1\nprint(a+2)", "expected": "3\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
