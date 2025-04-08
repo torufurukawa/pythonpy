@@ -8,7 +8,7 @@ from pythonpy.nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
 from pythonpy.main import main
 
 
-# [.] AssignNode(var_name, expr) を定義
+# [x] AssignNode(var_name, expr) を定義
 # [ ] NameNode(var_name) を定義
 # [ ] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
 # [ ] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
@@ -75,6 +75,15 @@ class TestTokenizeLine(unittest.TestCase):
                 "line": "/",
                 "expected": [Token("DIVIDE", "/")],
             },
+            # DOING: tokenize
+            {
+                "line": "p = 1",
+                "expected": [
+                    Token("IDENTIFIER", "p"),
+                    Token("EQUALS", "="),
+                    Token("NUMBER", "1")
+                ]
+            }
         ]
 
         for spec in specs:

@@ -50,12 +50,23 @@ def tokenize_line(line):
             tokens.append(Token("DIVIDE", c))
             i += 1
 
+        elif c == "=":
+            tokens.append(Token("EQUALS", c))
+            i += 1
+
         elif c.isdigit():
             start = i
             while i < len(line) and line[i].isdigit():
                 i += 1
             number = line[start:i]
             tokens.append(Token("NUMBER", number))
+
+        elif c.isalpha():
+            start = i
+            while i < len(line) and line[i].isalnum():
+                i += 1
+            ident = line[start:i]
+            tokens.append(Token("IDENTIFIER", ident))
 
         else:
             raise SyntaxError(f"Unexpected character: '{c}' at position {i}")
