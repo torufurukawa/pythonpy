@@ -509,6 +509,7 @@ class TestPython(unittest.TestCase):
             {"code": "print(2+3*4)", "expected": "14\n"},
             {"code": "print((1+2)*3)", "expected": "9\n"},
             {"code": "print()\nprint(1+2)", "expected": "\n3\n"},
+            {"code": "print()\n\nprint(1+2)\n", "expected": "\n3\n"},
         ]
         for spec in specs:
             with self.subTest(spec=spec):
