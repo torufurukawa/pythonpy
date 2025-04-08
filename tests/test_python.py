@@ -60,6 +60,15 @@ class TestTokenizeLine(unittest.TestCase):
                 ],
             },
             {
+                "line": "print(x)",
+                "expected": [
+                    Token("PRINT", "print"),
+                    Token("LPAREN", "("),
+                    Token("IDENTIFIER", "x"),
+                    Token("RPAREN", ")"),
+                ],
+            },
+            {
                 "line": "+",
                 "expected": [Token("PLUS", "+")],
             },
@@ -75,7 +84,6 @@ class TestTokenizeLine(unittest.TestCase):
                 "line": "/",
                 "expected": [Token("DIVIDE", "/")],
             },
-            # DOING: tokenize
             {
                 "line": "p = 1",
                 "expected": [
