@@ -14,7 +14,7 @@ from pythonpy.main import main
 # [x] NameNode(var_name) を定義
 # [x] parse_statement() を拡張： IDENTIFIER = EXPR → AssignNode(...)
 # [x] parse_statement() を拡張： PRINT(IDENTIFIER) -> PrintNode(NameNode(...))
-# [.] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
+# [x] evaluate(AssignNode) で env[var] = evaluate_expr(expr)
 # [ ] evaluate_expr(NameNode) で env[var] を返す
 # [ ] テストで a = 1\nprint(a) を書いて通るか確認
 # [ ] parse_statement( "log()"" ) で、syntax error
@@ -521,11 +521,10 @@ class TestEvaluate(unittest.TestCase):
         evaluate(node, env, fout)
         self.assertEqual(fout.getvalue(), "\n3\n")
 
-    # DOING: evaluate(AssignNode) で env[var] = evaluate_expr(expr)
     def test_assign(self):
         specs = [
-            {"var_name": "x", "expr": 3, "expected": 3}
-            # TODO: x = 2 + 3
+            {"var_name": "x", "expr": 3, "expected": 3},
+            {"var_name": "x", "expr": BinOpNode(1, "+", 2), "expected": 3}
         ]
 
         for spec in specs:

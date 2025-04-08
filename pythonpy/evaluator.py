@@ -1,4 +1,4 @@
-from .nodes import ProgramNode, PrintNode, BinOpNode
+from .nodes import ProgramNode, PrintNode, BinOpNode, AssignNode
 
 
 def evaluate(node, env, fout):
@@ -12,6 +12,10 @@ def evaluate(node, env, fout):
         else:
             result = evaluate_expr(node.value)
             print(result, file=fout)
+
+    elif isinstance(node, AssignNode):
+        env[node.var_name] = evaluate_expr(node.expr)
+
     else:
         raise TypeError("Unknown node type")
 
